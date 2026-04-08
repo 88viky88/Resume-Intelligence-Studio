@@ -9,7 +9,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://unpkg.com/docx@7.8.2/build/index.umd.js"></script>
 <style>
 /* ═══════════════════════════════════════════════════
    DESIGN TOKENS
@@ -1992,92 +1991,138 @@ function downloadResumePDF(){
   html2pdf().set({margin:[14,14,14,14],filename:'optimized-resume.pdf',image:{type:'jpeg',quality:0.97},html2canvas:{scale:2,useCORS:true},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(w).save().then(()=>document.body.removeChild(w));
 }
 
-function downloadResumeDOCX(){
+async function downloadResumeDOCX(){
   if(!S.resume.finalText){alert('No resume generated.');return;}
-  buildAndDownloadDOCX(S.resume.finalText,'optimized-resume.docx');
+  await buildAndDownloadDOCX(S.resume.finalText,'optimized-resume.docx');
 }
 
-// ── Shared DOCX builder ──────────────────────────────────────
-// docx@7.x UMD from unpkg exposes classes directly on window.docx
-// e.g. window.docx.Document, window.docx.Packer, window.docx.Paragraph
-function buildAndDownloadDOCX(plainText, filename){
-  // Detect the library — try every known binding pattern
-  let Document, Packer, Paragraph, TextRun;
-  try {
-    // unpkg UMD: window.docx.Document etc.
-    if(typeof window.docx !== 'undefined' && typeof window.docx.Document === 'function'){
-      ({ Document, Packer, Paragraph, TextRun } = window.docx);
-    }
-    // cdnjs UMD: sometimes exposes as global docx.Document
-    else if(typeof docx !== 'undefined' && typeof docx.Document === 'function'){
-      ({ Document, Packer, Paragraph, TextRun } = docx);
-    }
-    else {
-      throw new Error('not-loaded');
-    }
-  } catch(e){
-    if(e.message === 'not-loaded'){
-      // Graceful fallback — download as .txt
-      const blob = new Blob([plainText], { type: 'text/plain' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = filename.replace('.docx', '.txt');
-      a.click();
-      URL.revokeObjectURL(a.href);
-      alert('DOCX library could not be loaded.\n\nYour content has been downloaded as a .txt file instead.\nYou can open it in Word and Save As .docx.');
-      return;
-    }
-    alert(`DOCX error: ${e.message}`);
+// ── Pure JSZip DOCX builder — no external docx library needed ──
+// A .docx file is a ZIP containing XML. We build it entirely with JSZip.
+async function buildAndDownloadDOCX(plainText, filename){
+  if(typeof JSZip === 'undefined'){
+    // Fallback to txt if even JSZip is missing
+    const b=new Blob([plainText],{type:'text/plain'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(b);
+    a.download=filename.replace('.docx','.txt');a.click();
+    alert('Downloaded as .txt — JSZip library not available.');
     return;
   }
 
+  // ── Build DOCX XML ──────────────────────────────────────────
+  const lines = plainText.split('\n');
+  let bodyXml = '';
+
+  for(const raw of lines){
+    const line = raw.trimEnd();
+    if(!line.trim()){
+      // empty line → blank paragraph for spacing
+      bodyXml += `<w:p><w:pPr><w:spacing w:after="80"/></w:pPr></w:p>`;
+      continue;
+    }
+    const t = line.trim();
+    const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+    // ALL-CAPS heading (section titles)
+    if(t === t.toUpperCase() && t.length > 2 && t.length < 60 && !/^[•\-]/.test(t)){
+      bodyXml += `<w:p>
+        <w:pPr>
+          <w:spacing w:before="280" w:after="100"/>
+          <w:pBdr><w:bottom w:val="single" w:sz="6" w:space="4" w:color="1A1814"/></w:pBdr>
+        </w:pPr>
+        <w:r><w:rPr><w:b/><w:sz><w:sz w:val="22"/></w:sz></w:rPr><w:t>${esc(t)}</w:t></w:r>
+      </w:p>`;
+      continue;
+    }
+
+    // Bullet point
+    if(/^[•\-]/.test(t)){
+      const text = t.replace(/^[•\-]\s*/,'');
+      bodyXml += `<w:p>
+        <w:pPr>
+          <w:numPr><w:ilvl w:val="0"/><w:numId w:val="1"/></w:numPr>
+          <w:spacing w:after="50"/>
+          <w:ind w:left="432" w:hanging="216"/>
+        </w:pPr>
+        <w:r><w:rPr><w:sz><w:sz w:val="20"/></w:sz></w:rPr><w:t>${esc(text)}</w:t></w:r>
+      </w:p>`;
+      continue;
+    }
+
+    // Bold line (job title / company — contains | separator or 4-digit year at start)
+    const isBold = t.includes(' | ') || /\b(19|20)\d{2}\b/.test(t);
+    const rPr = isBold ? '<w:rPr><w:b/><w:sz><w:sz w:val="20"/></w:sz></w:rPr>' : '<w:rPr><w:sz><w:sz w:val="20"/></w:sz></w:rPr>';
+    bodyXml += `<w:p>
+      <w:pPr><w:spacing w:after="50"/></w:pPr>
+      <w:r>${rPr}<w:t xml:space="preserve">${esc(t)}</w:t></w:r>
+    </w:p>`;
+  }
+
+  // ── Assemble the ZIP ────────────────────────────────────────
+  const zip = new JSZip();
+
+  zip.file('[Content_Types].xml', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+  <Override PartName="/word/numbering.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml"/>
+  <Override PartName="/word/settings.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml"/>
+</Types>`);
+
+  zip.file('_rels/.rels', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+</Relationships>`);
+
+  zip.file('word/_rels/document.xml.rels', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering" Target="numbering.xml"/>
+  <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/settings" Target="settings.xml"/>
+</Relationships>`);
+
+  zip.file('word/settings.xml', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:settings xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:defaultTabStop w:val="720"/>
+</w:settings>`);
+
+  zip.file('word/numbering.xml', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:numbering xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:abstractNum w:abstractNumId="0">
+    <w:lvl w:ilvl="0">
+      <w:start w:val="1"/>
+      <w:numFmt w:val="bullet"/>
+      <w:lvlText w:val="&#x2022;"/>
+      <w:lvlJc w:val="left"/>
+      <w:pPr><w:ind w:left="432" w:hanging="216"/></w:pPr>
+    </w:lvl>
+  </w:abstractNum>
+  <w:num w:numId="1"><w:abstractNumId w:val="0"/></w:num>
+</w:numbering>`);
+
+  zip.file('word/document.xml', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+            xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+  <w:body>
+    <w:sectPr>
+      <w:pgSz w:w="12240" w:h="15840"/>
+      <w:pgMar w:top="1080" w:right="1080" w:bottom="1080" w:left="1080"/>
+    </w:sectPr>
+    ${bodyXml}
+  </w:body>
+</w:document>`);
+
+  // ── Download ────────────────────────────────────────────────
   try {
-    const children = plainText.split('\n').map(line => {
-      const t = line.trim();
-      if(!t) return new Paragraph({ spacing: { after: 60 } });
-
-      // ALL CAPS short line → section heading with underline border
-      if(t === t.toUpperCase() && t.length < 60 && !t.startsWith('•') && !t.startsWith('-') && t.length > 2){
-        return new Paragraph({
-          children: [new TextRun({ text: t, bold: true, size: 22, color: '1A1814' })],
-          spacing: { before: 240, after: 80 },
-          border: { bottom: { color: '1A1814', size: 6, value: 'single', space: 4 } }
-        });
-      }
-      // Bullet point
-      if(t.startsWith('•') || t.startsWith('-')){
-        return new Paragraph({
-          children: [new TextRun({ text: t.replace(/^[•\-]\s*/, ''), size: 20 })],
-          bullet: { level: 0 },
-          spacing: { after: 40 }
-        });
-      }
-      // Bold for job title / company lines (contain | or 4-digit year)
-      const isBold = t.includes(' | ') || /\d{4}/.test(t);
-      return new Paragraph({
-        children: [new TextRun({ text: t, size: 20, bold: isBold })],
-        spacing: { after: 40 }
-      });
-    });
-
-    const doc = new Document({ sections: [{ properties: {}, children }] });
-
-    Packer.toBlob(doc).then(blob => {
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }).catch(err => {
-      alert(`DOCX generation failed: ${err.message}`);
-    });
-
+    const blob = await zip.generateAsync({ type:'blob', mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   } catch(e){
-    console.error('DOCX build error:', e);
-    alert(`DOCX export failed: ${e.message}`);
+    alert('DOCX generation failed: ' + e.message);
+    console.error(e);
   }
 }
 function copyFinalResume(ev){navigator.clipboard.writeText(S.resume.finalText).then(()=>{const b=ev.target;const o=b.textContent;b.textContent='✓ Copied!';setTimeout(()=>b.textContent=o,2000);});}
@@ -2311,7 +2356,7 @@ function resetDSA(){
   document.getElementById('dsaSubmitBtn').textContent='Generate Coding Prep →';
   document.querySelectorAll('#dsaTopicChips .topic-chip, #dsaGuideTopicChips .topic-chip').forEach(c=>c.classList.remove('selected'));
 }
-function exportDSASession(fmt='txt'){
+async function exportDSASession(fmt='txt'){
   const title=S.dsa.output?.guideTitle||S.dsa.output?.problemTitle||'Coding Prep Session';
   const content=`TechPrep Pro — ${title}\n${'='.repeat(60)}\n\n${(S.dsa.output?.sections||[]).map(s=>`${s.title}\n${'-'.repeat(Math.min(s.title.length,60))}\n${s.content}\n`).join('\n')}`;
   if(fmt==='txt'){
@@ -2319,7 +2364,7 @@ function exportDSASession(fmt='txt'){
   } else if(fmt==='pdf'){
     exportSessionAsPDF(title, S.dsa.output?.sections||[], 'coding-prep-session.pdf');
   } else if(fmt==='docx'){
-    buildAndDownloadDOCX(content, 'coding-prep-session.docx');
+    await buildAndDownloadDOCX(content, 'coding-prep-session.docx');
   }
 }
 
@@ -2543,7 +2588,7 @@ function resetSysdes(){
   document.getElementById('sdGuideBlock').classList.add('hidden');
   document.getElementById('sdSubmitBtn').textContent='Generate System Design Prep →';
 }
-function exportSdSession(fmt='txt'){
+async function exportSdSession(fmt='txt'){
   const title=S.sd.output?.guideTitle||S.sd.output?.systemTitle||'System Design Session';
   const content=`TechPrep Pro — ${title}\n${'='.repeat(60)}\n\n${(S.sd.output?.sections||[]).map(s=>`${s.title}\n${'-'.repeat(Math.min(s.title.length,60))}\n${s.content}\n`).join('\n')}`;
   if(fmt==='txt'){
@@ -2551,7 +2596,7 @@ function exportSdSession(fmt='txt'){
   } else if(fmt==='pdf'){
     exportSessionAsPDF(title, S.sd.output?.sections||[], 'system-design-session.pdf');
   } else if(fmt==='docx'){
-    buildAndDownloadDOCX(content, 'system-design-session.docx');
+    await buildAndDownloadDOCX(content, 'system-design-session.docx');
   }
 }
 
