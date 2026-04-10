@@ -11,33 +11,42 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
 /* ═══════════════════════════════════════════════════
-   DESIGN TOKENS
+   DESIGN TOKENS — Deep Navy Theme
 ═══════════════════════════════════════════════════ */
 :root {
-  --cream:#F5F0E8; --cream2:#EDE8DC; --cream3:#E3DDD0;
-  --ink:#1A1814; --ink2:#2E2B24; --ink3:#52504A; --ink4:#807D75; --ink5:#B0ADA5;
-  --gold:#C8922A; --gold2:#E8A830; --gold-bg:rgba(200,146,42,0.09);
-  --red:#C0392B;  --red-bg:rgba(192,57,43,0.07);
-  --green:#1A7A4A; --green-bg:rgba(26,122,74,0.07);
-  --blue:#1A4A7A; --blue-bg:rgba(26,74,122,0.07);
-  --purple:#5B21B6; --purple-bg:rgba(91,33,182,0.07);
-  --teal:#0E7490; --teal-bg:rgba(14,116,144,0.07);
-  --border:rgba(26,24,20,0.1); --border2:rgba(26,24,20,0.055);
-  --shadow-sm:0 1px 4px rgba(26,24,20,0.06),0 2px 12px rgba(26,24,20,0.04);
-  --shadow-md:0 4px 20px rgba(26,24,20,0.1),0 1px 4px rgba(26,24,20,0.06);
-  --shadow-lg:0 12px 48px rgba(26,24,20,0.14),0 4px 16px rgba(26,24,20,0.08);
+  /* Navy palette */
+  --navy-deep:#0D1B2A; --navy:#112240; --navy-mid:#162D4A; --navy-light:#1E3A5F;
+  --navy-border:rgba(255,255,255,0.08); --navy-border2:rgba(255,255,255,0.05);
+  /* Blue accent */
+  --blue-accent:#58A6FF; --blue-accent2:#79C0FF; --blue-glow:rgba(88,166,255,0.12);
+  /* Surface colours (replaces cream) */
+  --surface:#F8FAFB; --surface2:#EFF3F7; --surface3:#E3EAF2;
+  /* Ink (text) */
+  --ink:#0D1B2A; --ink2:#1E3A5F; --ink3:#3D5A80; --ink4:#6B8EAD; --ink5:#9BB4CC;
+  /* Semantic */
+  --gold:#E8A830; --gold2:#F5C660; --gold-bg:rgba(232,168,48,0.1);
+  --red:#E05252; --red-bg:rgba(224,82,82,0.08);
+  --green:#3FB950; --green-bg:rgba(63,185,80,0.08);
+  --blue:#1A4A7A; --blue-bg:rgba(88,166,255,0.1);
+  --purple:#8B5CF6; --purple-bg:rgba(139,92,246,0.08);
+  --teal:#0E7490; --teal-bg:rgba(14,116,144,0.08);
+  /* Borders & shadows */
+  --border:rgba(61,90,128,0.18); --border2:rgba(61,90,128,0.1);
+  --shadow-sm:0 1px 4px rgba(13,27,42,0.12),0 2px 12px rgba(13,27,42,0.08);
+  --shadow-md:0 4px 20px rgba(13,27,42,0.18),0 1px 4px rgba(13,27,42,0.1);
+  --shadow-lg:0 12px 48px rgba(13,27,42,0.28),0 4px 16px rgba(13,27,42,0.14);
   --r-sm:6px; --r-md:10px; --r-lg:16px; --r-xl:24px;
   /* module accent colours */
-  --m1:#C8922A; /* Resume – gold */
-  --m2:#1A7A4A; /* DSA    – green */
-  --m3:#1A4A7A; /* SysDes – blue */
+  --m1:#E8A830; /* Resume – gold */
+  --m2:#3FB950; /* DSA    – green */
+  --m3:#58A6FF; /* SysDes – blue */
 }
 
 /* ═══ RESET ═══ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--cream);color:var(--ink);font-family:'Lato',sans-serif;font-size:15px;line-height:1.65;min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='1' height='1' fill='%231A1814' fill-opacity='0.016'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+body{background:var(--navy);color:var(--ink);font-family:'Lato',sans-serif;font-size:15px;line-height:1.65;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='1' height='1' fill='%2358A6FF' fill-opacity='0.025'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
 .app{position:relative;z-index:1}
 
 /* ═══ LAYOUT ═══ */
@@ -47,7 +56,122 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 /* ═══════════════════════════════════════════════════
    TOP NAV
 ═══════════════════════════════════════════════════ */
-.topnav{position:sticky;top:0;z-index:200;background:rgba(245,240,232,0.95);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0}
+.topnav{position:sticky;top:0;z-index:200;background:rgba(13,27,42,0.97);backdrop-filter:blur(14px);border-bottom:1px solid var(--navy-border);padding:0}
+.topnav-inner{display:flex;align-items:stretch;min-height:56px}
+.brand{display:flex;align-items:center;gap:10px;padding:0 20px 0 0;border-right:1px solid var(--navy-border);margin-right:4px;flex-shrink:0}
+.brand-mark{width:30px;height:30px;background:var(--blue-accent);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:var(--navy-deep);letter-spacing:-1px;flex-shrink:0}
+.brand-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;letter-spacing:-0.02em;color:#F0F6FF;white-space:nowrap}
+.module-tabs{display:flex;align-items:stretch;flex:1}
+.mod-tab{display:flex;align-items:center;gap:7px;padding:0 18px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:rgba(240,246,255,0.45);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;white-space:nowrap;border-top:none;border-left:none;border-right:none;background:none;position:relative}
+.mod-tab:hover{color:#F0F6FF;background:rgba(255,255,255,0.04)}
+.mod-tab.active{color:#F0F6FF;border-bottom-color:var(--blue-accent)}
+.mod-tab.active.m1{border-bottom-color:var(--gold);color:var(--gold)}
+.mod-tab.active.m2{border-bottom-color:var(--green);color:var(--green)}
+.mod-tab.active.m3{border-bottom-color:var(--blue-accent);color:var(--blue-accent)}
+.mod-tab-icon{font-size:14px}
+.nav-right{display:flex;align-items:center;gap:8px;padding:0 16px;margin-left:auto;flex-shrink:0}
+.api-nav-pill{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:50px;padding:5px 12px;cursor:pointer;transition:all 0.18s}
+.api-nav-pill:hover{border-color:var(--blue-accent);background:rgba(88,166,255,0.1)}
+.api-nav-pill-dot{width:7px;height:7px;border-radius:50%;background:#E05252;flex-shrink:0}
+.api-nav-pill-dot.ok{background:#3FB950}
+.api-nav-pill-text{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:rgba(240,246,255,0.7);letter-spacing:0.04em}
+
+/* ═══ CARDS ═══ */
+.card{background:rgba(255,255,255,0.97);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow-sm);margin-bottom:18px;overflow:hidden}
+.card-header{padding:18px 22px;border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:12px;background:var(--surface)}
+.card-icon{width:38px;height:38px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.ci-ink{background:var(--navy)} .ci-gold{background:var(--gold-bg)} .ci-red{background:var(--red-bg)} .ci-green{background:var(--green-bg)} .ci-blue{background:var(--blue-bg)} .ci-purple{background:var(--purple-bg)} .ci-teal{background:var(--teal-bg)}
+.card-h{font-family:'Playfair Display',serif;font-size:17px;font-weight:600;letter-spacing:-0.01em;color:var(--navy-deep)}
+.card-sub{font-size:11px;color:var(--ink4);font-family:'IBM Plex Mono',monospace;margin-top:2px}
+.card-body{padding:22px;background:white}
+
+/* ═══ FORMS ═══ */
+textarea,input[type="text"],input[type="password"],select{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:11px 13px;color:var(--navy-deep);font-family:'Lato',sans-serif;font-size:14px;line-height:1.6;outline:none;transition:border-color 0.2s,box-shadow 0.2s;-webkit-appearance:none}
+textarea:focus,input:focus,select:focus{border-color:var(--blue-accent);box-shadow:0 0 0 3px rgba(88,166,255,0.15)}
+textarea{resize:vertical} textarea::placeholder,input::placeholder{color:var(--ink5)}
+.field{margin-bottom:16px}
+.field-label{display:block;font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:0.07em;font-family:'IBM Plex Mono',monospace;margin-bottom:6px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:640px){.two-col,.three-col{grid-template-columns:1fr}}
+
+/* ═══ BUTTONS ═══ */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:11px 22px;border:none;border-radius:var(--r-sm);font-family:'Lato',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.18s;letter-spacing:0.02em;white-space:nowrap}
+.btn:disabled{opacity:0.38;cursor:not-allowed;pointer-events:none}
+.btn-ink{background:var(--blue-accent);color:var(--navy-deep);box-shadow:0 2px 8px rgba(88,166,255,0.25)}
+.btn-ink:hover:not(:disabled){background:var(--blue-accent2);transform:translateY(-1px);box-shadow:0 4px 16px rgba(88,166,255,0.35)}
+.btn-gold{background:var(--gold);color:var(--navy-deep);box-shadow:0 2px 8px rgba(232,168,48,0.25)}
+.btn-gold:hover:not(:disabled){background:var(--gold2);transform:translateY(-1px)}
+.btn-green{background:#2ea043;color:white;box-shadow:0 2px 8px rgba(46,160,67,0.25)}
+.btn-green:hover:not(:disabled){background:#3fb950;transform:translateY(-1px)}
+.btn-blue{background:var(--blue-accent);color:var(--navy-deep)}
+.btn-blue:hover:not(:disabled){background:var(--blue-accent2);transform:translateY(-1px)}
+/* btn-outline on dark backgrounds — visible white border + text */
+.btn-outline{background:rgba(255,255,255,0.08);color:#E6EDF3;border:1.5px solid rgba(255,255,255,0.25)}
+.btn-outline:hover:not(:disabled){border-color:var(--blue-accent);color:var(--blue-accent);background:rgba(88,166,255,0.12)}
+/* btn-ghost on dark backgrounds — light text */
+.btn-ghost{background:rgba(255,255,255,0.06);color:rgba(240,246,255,0.75);padding:8px 14px;font-size:13px;border:1px solid rgba(255,255,255,0.1)}
+.btn-ghost:hover{color:#F0F6FF;background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.2)}
+.btn-sm{padding:8px 16px;font-size:13px}
+.btn-lg{padding:14px 30px;font-size:15px}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+/* ═══ ALERTS ═══ */
+.alert{padding:11px 15px;border-radius:var(--r-sm);font-size:13px;line-height:1.5;margin-bottom:14px}
+.alert-warn{background:var(--gold-bg);border:1px solid rgba(232,168,48,0.25);color:#92600a}
+.alert-error{background:var(--red-bg);border:1px solid rgba(224,82,82,0.25);color:var(--red)}
+.alert-info{background:var(--blue-bg);border:1px solid rgba(88,166,255,0.2);color:var(--blue)}
+.alert-ok{background:var(--green-bg);border:1px solid rgba(63,185,80,0.25);color:#186429}
+
+/* ═══ TAGS ═══ */
+.tag{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:4px;font-size:11px;font-weight:700;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:0.04em}
+.tag-red{background:var(--red-bg);color:var(--red);border:1px solid rgba(224,82,82,0.2)}
+.tag-gold{background:var(--gold-bg);color:#92600a;border:1px solid rgba(232,168,48,0.2)}
+.tag-green{background:var(--green-bg);color:#186429;border:1px solid rgba(63,185,80,0.2)}
+.tag-blue{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(88,166,255,0.2)}
+.tag-ink{background:rgba(13,27,42,0.07);color:var(--ink3);border:1px solid var(--border)}
+.inline-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+
+/* ═══ MODULE VIEWS ═══ */
+.module-view{padding:32px 0 60px;min-height:calc(100vh - 56px);background:var(--navy)}
+.mod-hero{padding:24px 0;margin-bottom:20px;border-bottom:1px solid var(--navy-border)}
+.mod-hero-inner{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.mod-hero-left{display:flex;align-items:center;gap:14px}
+.mod-hero-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.mhi-gold{background:var(--gold-bg);border:1px solid rgba(232,168,48,0.25)}
+.mhi-green{background:var(--green-bg);border:1px solid rgba(63,185,80,0.25)}
+.mhi-blue{background:var(--blue-bg);border:1px solid rgba(88,166,255,0.25)}
+.mod-hero-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;letter-spacing:-0.02em;color:#F0F6FF}
+.mod-hero-sub{font-size:13px;color:rgba(240,246,255,0.5);font-family:'IBM Plex Mono',monospace;margin-top:3px}
+
+/* ═══ STEP ROW ═══ */
+.step-row{display:flex;align-items:center;gap:0;margin-bottom:22px;overflow-x:auto}
+.step-item{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.step-num{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--navy-border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:rgba(240,246,255,0.35);transition:all 0.3s;font-family:'IBM Plex Mono',monospace}
+.step-item.active .step-num{background:var(--blue-accent);border-color:var(--blue-accent);color:var(--navy-deep)}
+.step-item.done .step-num{background:var(--green);border-color:var(--green);color:white}
+.step-lbl{font-size:11px;font-weight:700;color:rgba(240,246,255,0.35);white-space:nowrap;transition:color 0.3s;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:0.04em}
+.step-item.active .step-lbl{color:#F0F6FF}.step-item.done .step-lbl{color:var(--green)}
+.step-sep{width:28px;height:1px;background:var(--navy-border);margin:0 3px;flex-shrink:0}
+
+/* ═══ LOADING ═══ */
+.loading-overlay{position:fixed;inset:0;background:rgba(13,27,42,0.92);backdrop-filter:blur(8px);z-index:400;display:flex;align-items:center;justify-content:center}
+.loading-card{background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--r-xl);padding:44px 48px;text-align:center;box-shadow:var(--shadow-lg);max-width:400px;width:90%}
+.loader-mark{width:48px;height:48px;background:var(--blue-accent);border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:17px;font-weight:600;color:var(--navy-deep);letter-spacing:-1.5px;margin:0 auto 20px;animation:pulse-scale 1.4s ease-in-out infinite}
+@keyframes pulse-scale{0%,100%{transform:scale(1)}50%{transform:scale(0.91)}}
+.loading-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:600;margin-bottom:6px;color:#F0F6FF}
+.loading-sub{font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(240,246,255,0.45);margin-bottom:22px}
+.loading-bar-wrap{height:2px;background:var(--navy-border);border-radius:1px;overflow:hidden;margin-bottom:18px}
+.loading-bar{height:100%;background:linear-gradient(90deg,var(--blue-accent),var(--blue-accent2));animation:load-sweep 1.8s ease-in-out infinite}
+@keyframes load-sweep{0%{width:0%;margin-left:0}50%{width:60%;margin-left:20%}100%{width:0%;margin-left:100%}}
+.lsl-item{font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(240,246,255,0.35);display:flex;align-items:center;gap:9px;transition:color 0.3s;margin-bottom:5px}
+.lsl-item.active{color:var(--blue-accent)}.lsl-item.done{color:var(--green)}
+.lsl-dot{width:5px;height:5px;border-radius:50%;background:rgba(240,246,255,0.2);flex-shrink:0;transition:background 0.3s}
+.lsl-item.active .lsl-dot{background:var(--blue-accent)}.lsl-item.done .lsl-dot{background:var(--green)}
+
+/* ═══ SECTION LABEL ═══ */
+.sec-label{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;color:rgba(240,246,255,0.4);margin-bottom:10px;display:flex;align-items:center;gap:10px}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--navy-border)}
 .topnav-inner{display:flex;align-items:stretch;min-height:56px}
 
 .brand{display:flex;align-items:center;gap:10px;padding:0 20px 0 0;border-right:1px solid var(--border);margin-right:4px;flex-shrink:0}
@@ -57,8 +181,8 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 /* Module nav tabs */
 .module-tabs{display:flex;align-items:stretch;flex:1}
 .mod-tab{display:flex;align-items:center;gap:7px;padding:0 18px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:var(--ink4);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;white-space:nowrap;border-top:none;border-left:none;border-right:none;background:none;position:relative}
-.mod-tab:hover{color:var(--ink);background:var(--cream2)}
-.mod-tab.active{color:var(--ink);border-bottom-color:var(--ink)}
+.mod-tab:hover{color:#F0F6FF;background:rgba(255,255,255,0.04)}
+.mod-tab.active{color:#F0F6FF;border-bottom-color:var(--blue-accent)}
 .mod-tab.active.m1{border-bottom-color:var(--m1);color:var(--m1)}
 .mod-tab.active.m2{border-bottom-color:var(--m2);color:var(--m2)}
 .mod-tab.active.m3{border-bottom-color:var(--m3);color:var(--m3)}
@@ -84,7 +208,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .modal-close{position:absolute;top:16px;right:16px;background:none;border:none;font-size:18px;cursor:pointer;color:var(--ink4)}
 .modal-field{margin-bottom:14px}
 .modal-label{display:block;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--ink4);margin-bottom:6px}
-.modal-input{width:100%;background:var(--cream);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 12px;color:var(--ink);font-family:'IBM Plex Mono',monospace;font-size:13px;outline:none;transition:border-color 0.2s}
+.modal-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 12px;color:var(--ink);font-family:'IBM Plex Mono',monospace;font-size:13px;outline:none;transition:border-color 0.2s}
 .modal-input:focus{border-color:var(--gold)}
 .modal-hint{font-size:11px;color:var(--ink5);margin-top:16px;font-family:'IBM Plex Mono',monospace;line-height:1.5}
 .modal-btn-row{display:flex;gap:10px;margin-top:20px}
@@ -101,7 +225,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .card-body{padding:22px}
 
 /* ═══ FORMS ═══ */
-textarea,input[type="text"],input[type="password"],select{width:100%;background:var(--cream);border:1px solid var(--border);border-radius:var(--r-sm);padding:11px 13px;color:var(--ink);font-family:'Lato',sans-serif;font-size:14px;line-height:1.6;outline:none;transition:border-color 0.2s,box-shadow 0.2s;-webkit-appearance:none}
+textarea,input[type="text"],input[type="password"],select{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:11px 13px;color:var(--ink);font-family:'Lato',sans-serif;font-size:14px;line-height:1.6;outline:none;transition:border-color 0.2s,box-shadow 0.2s;-webkit-appearance:none}
 textarea:focus,input:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(200,146,42,0.1)}
 textarea{resize:vertical} textarea::placeholder,input::placeholder{color:var(--ink5)}
 .field{margin-bottom:16px}
@@ -117,23 +241,7 @@ textarea{resize:vertical} textarea::placeholder,input::placeholder{color:var(--i
 .btn-ink:hover:not(:disabled){background:var(--ink2);transform:translateY(-1px);box-shadow:0 4px 16px rgba(26,24,20,0.22)}
 .btn-gold{background:var(--gold);color:white;box-shadow:0 2px 8px rgba(200,146,42,0.22)}
 .btn-gold:hover:not(:disabled){background:var(--gold2);transform:translateY(-1px)}
-.btn-green{background:var(--green);color:white}
-.btn-green:hover:not(:disabled){background:#156038;transform:translateY(-1px)}
-.btn-blue{background:var(--blue);color:white}
-.btn-blue:hover:not(:disabled){background:#163d66;transform:translateY(-1px)}
-.btn-outline{background:transparent;color:var(--ink);border:1.5px solid var(--border)}
-.btn-outline:hover:not(:disabled){border-color:var(--ink3);background:var(--cream2)}
-.btn-ghost{background:transparent;color:var(--ink3);padding:8px 14px;font-size:13px}
-.btn-ghost:hover{color:var(--ink);background:var(--cream2)}
-.btn-sm{padding:8px 16px;font-size:13px}
-.btn-lg{padding:14px 30px;font-size:15px}
-.btn-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-
-/* ═══ ALERTS ═══ */
-.alert{padding:11px 15px;border-radius:var(--r-sm);font-size:13px;line-height:1.5;margin-bottom:14px}
-.alert-warn{background:var(--gold-bg);border:1px solid rgba(200,146,42,0.2);color:var(--gold)}
-.alert-error{background:var(--red-bg);border:1px solid rgba(192,57,43,0.2);color:var(--red)}
-.alert-info{background:var(--blue-bg);border:1px solid rgba(26,74,122,0.2);color:var(--blue)}
+/* ═══ ALERTS (legacy fallback) ═══ */
 .alert-ok{background:var(--green-bg);border:1px solid rgba(26,122,74,0.2);color:var(--green)}
 
 /* ═══ TAGS ═══ */
@@ -152,7 +260,7 @@ textarea{resize:vertical} textarea::placeholder,input::placeholder{color:var(--i
 @keyframes pulse-scale{0%,100%{transform:scale(1)}50%{transform:scale(0.91)}}
 .loading-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:600;margin-bottom:6px}
 .loading-sub{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink4);margin-bottom:22px}
-.loading-bar-wrap{height:2px;background:var(--cream2);border-radius:1px;overflow:hidden;margin-bottom:18px}
+.loading-bar-wrap{height:2px;background:var(--surface2);border-radius:1px;overflow:hidden;margin-bottom:18px}
 .loading-bar{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));animation:load-sweep 1.8s ease-in-out infinite}
 @keyframes load-sweep{0%{width:0%;margin-left:0}50%{width:60%;margin-left:20%}100%{width:0%;margin-left:100%}}
 .lsl-item{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink5);display:flex;align-items:center;gap:9px;transition:color 0.3s;margin-bottom:5px}
@@ -193,9 +301,9 @@ textarea{resize:vertical} textarea::placeholder,input::placeholder{color:var(--i
 /* Score breakdown */
 .sb-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 @media(max-width:600px){.sb-grid{grid-template-columns:1fr 1fr}}
-.sb-item{background:var(--cream);border:1px solid var(--border);border-radius:var(--r-md);padding:13px}
+.sb-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:13px}
 .sb-lbl{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink4);margin-bottom:7px}
-.sb-bar-wrap{height:3px;background:var(--cream2);border-radius:2px;overflow:hidden;margin-bottom:5px}
+.sb-bar-wrap{height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;margin-bottom:5px}
 .sb-bar{height:100%;border-radius:2px;transition:width 1.2s cubic-bezier(0.4,0,0.2,1)}
 .sb-row{display:flex;justify-content:space-between;align-items:baseline}
 .sb-score{font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600}
@@ -232,19 +340,19 @@ textarea{resize:vertical} textarea::placeholder,input::placeholder{color:var(--i
 .chat-hdr-sub{font-size:11px;color:rgba(255,255,255,0.45);margin-top:1px;font-family:'IBM Plex Mono',monospace}
 .chat-badge{background:rgba(200,146,42,0.2);color:var(--gold2);font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;letter-spacing:0.06em;text-transform:uppercase;margin-left:auto}
 .chat-suggestions{padding:0 18px 12px;display:flex;flex-wrap:wrap;gap:6px}
-.chip{background:var(--cream2);border:1px solid var(--border);padding:5px 11px;border-radius:50px;font-size:11px;font-weight:700;color:var(--ink3);cursor:pointer;transition:all 0.18s;font-family:'IBM Plex Mono',monospace}
+.chip{background:var(--surface2);border:1px solid var(--border);padding:5px 11px;border-radius:50px;font-size:11px;font-weight:700;color:var(--ink3);cursor:pointer;transition:all 0.18s;font-family:'IBM Plex Mono',monospace}
 .chip:hover{border-color:var(--gold);color:var(--gold);background:var(--gold-bg)}
 .chat-msgs{padding:16px 18px;display:flex;flex-direction:column;gap:10px;max-height:400px;overflow-y:auto}
 .chat-msg{display:flex;gap:9px}
 .chat-msg.user{flex-direction:row-reverse}
 .chat-bubble{padding:10px 14px;border-radius:var(--r-md);font-size:13px;line-height:1.6;max-width:84%}
-.chat-msg.ai .chat-bubble{background:var(--cream);border:1px solid var(--border);color:var(--ink2);border-top-left-radius:3px}
+.chat-msg.ai .chat-bubble{background:var(--surface);border:1px solid var(--border);color:var(--ink2);border-top-left-radius:3px}
 .chat-msg.user .chat-bubble{background:var(--ink);color:white;border-bottom-right-radius:3px}
 .chat-av{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-family:'IBM Plex Mono',monospace;font-weight:600}
 .chat-msg.ai .chat-av{background:var(--ink);color:var(--gold2)}
-.chat-msg.user .chat-av{background:var(--cream2);border:1px solid var(--border)}
+.chat-msg.user .chat-av{background:var(--surface2);border:1px solid var(--border)}
 .chat-bubble ul{padding-left:15px;margin-top:5px}.chat-bubble li{margin-bottom:3px}.chat-bubble strong{font-weight:700}
-.chat-input-row{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:9px;background:var(--cream)}
+.chat-input-row{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:9px;background:var(--surface)}
 .chat-input{flex:1;background:white;border:1px solid var(--border);border-radius:50px;padding:9px 16px;font-family:'Lato',sans-serif;font-size:13px;outline:none;transition:border-color 0.2s}
 .chat-input:focus{border-color:var(--gold)}
 .chat-send{background:var(--ink);color:var(--gold2);border:none;border-radius:50px;padding:9px 16px;font-family:'Lato',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s}
@@ -268,7 +376,7 @@ textarea{resize:vertical} textarea::placeholder,input::placeholder{color:var(--i
 /* Score compare */
 .score-compare{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center;margin-bottom:20px}
 .sc-card{border-radius:var(--r-lg);padding:22px;text-align:center}
-.sc-card.before{background:var(--cream2);border:1px solid var(--border)}
+.sc-card.before{background:var(--surface2);border:1px solid var(--border)}
 .sc-card.after{background:var(--ink);color:white}
 .sc-lbl{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:7px}
 .sc-card.before .sc-lbl{color:var(--ink4)}.sc-card.after .sc-lbl{color:var(--gold2)}
@@ -281,7 +389,7 @@ textarea{resize:vertical} textarea::placeholder,input::placeholder{color:var(--i
 
 /* Resume preview */
 .resume-preview-wrap{background:white;border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-md)}
-.rp-bar{background:var(--cream2);border-bottom:1px solid var(--border);padding:9px 16px;display:flex;align-items:center;gap:7px}
+.rp-bar{background:var(--surface2);border-bottom:1px solid var(--border);padding:9px 16px;display:flex;align-items:center;gap:7px}
 .rp-dot{width:9px;height:9px;border-radius:50%}
 .rp-dot:nth-child(1){background:#ff5f57}.rp-dot:nth-child(2){background:#ffbd2e}.rp-dot:nth-child(3){background:#28ca41}
 .rp-body{padding:36px 44px;font-size:13px;line-height:1.6;color:var(--ink);max-height:600px;overflow-y:auto;white-space:pre-wrap;font-family:'Lato',sans-serif}
@@ -301,7 +409,7 @@ textarea{resize:vertical} textarea::placeholder,input::placeholder{color:var(--i
 .or-div::before,.or-div::after{content:'';flex:1;height:1px;background:var(--border)}
 
 /* Parsed info */
-.parsed-info{background:var(--cream);border:1px solid var(--border);border-radius:var(--r-md);padding:14px 16px;margin-bottom:14px}
+.parsed-info{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:14px 16px;margin-bottom:14px}
 .pi-row{display:flex;gap:7px;flex-wrap:wrap;align-items:baseline;margin-bottom:6px}
 .pi-row:last-child{margin-bottom:0}
 .pi-lbl{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink4);min-width:88px}
@@ -420,18 +528,129 @@ textarea{resize:vertical} textarea::placeholder,input::placeholder{color:var(--i
 .mhi-gold{background:var(--gold-bg);border:1px solid rgba(200,146,42,0.2)}
 .mhi-green{background:var(--green-bg);border:1px solid rgba(26,122,74,0.2)}
 .mhi-blue{background:var(--blue-bg);border:1px solid rgba(26,74,122,0.2)}
-.mod-hero-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;letter-spacing:-0.02em}
-.mod-hero-sub{font-size:13px;color:var(--ink4);font-family:'IBM Plex Mono',monospace;margin-top:3px}
+.mod-hero-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;letter-spacing:-0.02em;color:#F0F6FF}
+.mod-hero-sub{font-size:13px;color:rgba(240,246,255,0.5);font-family:'IBM Plex Mono',monospace;margin-top:3px}
 
-/* Progress steps inside module */
+/* Progress steps inside module — navy theme */
 .step-row{display:flex;align-items:center;gap:0;margin-bottom:22px;overflow-x:auto}
 .step-item{display:flex;align-items:center;gap:8px;flex-shrink:0}
-.step-num{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--ink5);transition:all 0.3s;font-family:'IBM Plex Mono',monospace}
-.step-item.active .step-num{background:var(--ink);border-color:var(--ink);color:var(--gold2)}
-.step-item.done .step-num{background:var(--green);border-color:var(--green);color:white}
-.step-lbl{font-size:11px;font-weight:700;color:var(--ink5);white-space:nowrap;transition:color 0.3s;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:0.04em}
-.step-item.active .step-lbl{color:var(--ink)}.step-item.done .step-lbl{color:var(--green)}
-.step-sep{width:28px;height:1px;background:var(--border);margin:0 3px;flex-shrink:0}
+.step-num{width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:rgba(240,246,255,0.35);transition:all 0.3s;font-family:'IBM Plex Mono',monospace;background:transparent}
+.step-item.active .step-num{background:var(--blue-accent);border-color:var(--blue-accent);color:var(--navy-deep)}
+.step-item.done .step-num{background:#2ea043;border-color:#2ea043;color:white}
+.step-lbl{font-size:11px;font-weight:700;color:rgba(240,246,255,0.35);white-space:nowrap;transition:color 0.3s;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:0.04em}
+.step-item.active .step-lbl{color:#F0F6FF}.step-item.done .step-lbl{color:#3FB950}
+.step-sep{width:28px;height:1px;background:rgba(255,255,255,0.1);margin:0 3px;flex-shrink:0}
+
+/* ═══ SYSTEM DESIGN DIAGRAM ═══ */
+.sd-diagram-card{background:white;border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;margin-bottom:18px}
+.sd-diagram-hdr{background:var(--ink);padding:16px 22px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.sd-diagram-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:600;color:white}
+.sd-diagram-badge{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;color:var(--gold2);background:rgba(200,146,42,0.15);padding:3px 9px;border-radius:3px;letter-spacing:0.06em;text-transform:uppercase}
+.sd-diagram-tabs{display:flex;gap:6px}
+.sd-dtab{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:5px 12px;border-radius:4px;cursor:pointer;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5);background:transparent;transition:all 0.18s}
+.sd-dtab.active{background:white;color:var(--ink);border-color:white}
+.sd-canvas-wrap{background:var(--surface);position:relative;overflow:auto;min-height:420px}
+.sd-svg-canvas{display:block;min-width:900px}
+/* Node styles */
+.sd-node{cursor:pointer;transition:filter 0.18s}
+.sd-node:hover .sd-node-box{filter:brightness(1.08)}
+.sd-node-box{rx:8;transition:all 0.2s}
+.sd-node-label{font-family:'Lato',sans-serif;font-size:12px;font-weight:700;text-anchor:middle;dominant-baseline:middle;pointer-events:none}
+.sd-node-sublabel{font-family:'IBM Plex Mono',monospace;font-size:9px;text-anchor:middle;dominant-baseline:middle;pointer-events:none;opacity:0.7}
+.sd-node-icon{font-size:16px;text-anchor:middle;dominant-baseline:middle;pointer-events:none}
+/* Edge / arrow */
+.sd-edge{fill:none;stroke:#B0ADA5;stroke-width:1.5;marker-end:url(#arrow)}
+.sd-edge-label{font-family:'IBM Plex Mono',monospace;font-size:9px;fill:var(--ink4);text-anchor:middle}
+/* LLD Panel */
+.sd-lld-panel{border-top:1px solid var(--border);background:var(--surface);padding:0}
+.sd-lld-hdr{background:var(--ink2);padding:14px 22px;display:flex;align-items:center;gap:10px}
+.sd-lld-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:white}
+.sd-lld-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(255,255,255,0.45);margin-left:auto}
+.sd-lld-close{background:none;border:none;color:rgba(255,255,255,0.5);font-size:18px;cursor:pointer;margin-left:8px;transition:color 0.18s}
+.sd-lld-close:hover{color:white}
+.sd-lld-body{padding:20px 22px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.sd-lld-section{background:white;border:1px solid var(--border);border-radius:var(--r-md);padding:14px}
+.sd-lld-sec-title{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink4);margin-bottom:8px}
+.sd-lld-content{font-size:13px;line-height:1.6;color:var(--ink2)}
+.sd-lld-content ul{padding-left:15px;margin-top:4px}.sd-lld-content li{margin-bottom:3px}
+.sd-lld-content code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface);padding:1px 5px;border-radius:3px}
+@media(max-width:640px){.sd-lld-body{grid-template-columns:1fr}}
+
+/* ═══ DSA CODE VIEWER ═══ */
+.dsa-code-card{background:white;border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;margin-bottom:18px}
+.dsa-code-hdr{background:#0D1117;padding:16px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.dsa-code-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:600;color:#F0F6FF}
+.dsa-code-badge{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;color:#3FB950;background:rgba(63,185,80,0.15);border:1px solid rgba(63,185,80,0.25);padding:3px 9px;border-radius:3px;letter-spacing:0.06em;text-transform:uppercase}
+.dsa-code-tabs{display:flex;gap:5px;flex-wrap:wrap}
+.dsa-ctab{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:5px 13px;border-radius:4px;cursor:pointer;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5);background:transparent;transition:all 0.18s;white-space:nowrap}
+.dsa-ctab.active{background:#58A6FF;color:#0D1117;border-color:#58A6FF}
+.dsa-ctab.brute.active{background:#E8A830;color:#0D1117;border-color:#E8A830}
+.dsa-ctab.optimal.active{background:#3FB950;color:#0D1117;border-color:#3FB950}
+/* Code meta bar */
+.dsa-code-meta{background:#161B22;padding:10px 22px;display:flex;align-items:center;gap:16px;border-bottom:1px solid rgba(255,255,255,0.06);flex-wrap:wrap}
+.dsa-meta-pill{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 10px;border-radius:50px;letter-spacing:0.04em}
+.dmp-time{background:rgba(63,185,80,0.15);color:#3FB950;border:1px solid rgba(63,185,80,0.25)}
+.dmp-space{background:rgba(88,166,255,0.12);color:#58A6FF;border:1px solid rgba(88,166,255,0.2)}
+.dmp-diff{background:rgba(232,168,48,0.12);color:#E8A830;border:1px solid rgba(232,168,48,0.2)}
+.dsa-code-meta-desc{font-size:12px;color:rgba(240,246,255,0.45);font-family:'IBM Plex Mono',monospace;flex:1;min-width:200px}
+/* Code block */
+.dsa-code-body{background:#0D1117;padding:0;overflow-x:auto}
+.dsa-code-pre{margin:0;padding:20px 24px;font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:1.75;color:#E6EDF3;white-space:pre;overflow-x:auto;counter-reset:line}
+.dsa-code-line{display:flex;gap:0;position:relative}
+.dsa-code-line:hover{background:rgba(255,255,255,0.03)}
+.dsa-code-line.annotated{background:rgba(88,166,255,0.06);border-left:2px solid #58A6FF}
+.dsa-code-line.key-line{background:rgba(63,185,80,0.05);border-left:2px solid #3FB950}
+.dsa-code-line.dsa-user-mark{background:rgba(232,168,48,0.08)!important;border-left:2px solid var(--gold)!important}
+.dcl-num{color:rgba(255,255,255,0.2);font-size:11px;min-width:36px;user-select:none;padding-right:12px;text-align:right;flex-shrink:0;line-height:1.75}
+.dcl-code{flex:1;line-height:1.75}
+.dcl-ann{font-size:10px;color:#58A6FF;font-family:'IBM Plex Mono',monospace;padding-left:16px;white-space:nowrap;align-self:center;opacity:0.8}
+/* Syntax token colours (CSS-only, applied by tokeniser) */
+.tok-kw{color:#FF7B72}   /* keywords: def, class, return, if, for, while */
+.tok-fn{color:#D2A8FF}   /* function names */
+.tok-str{color:#A5D6FF}  /* strings */
+.tok-num{color:#79C0FF}  /* numbers */
+.tok-cmt{color:#8B949E;font-style:italic} /* comments */
+.tok-cls{color:#FFA657}  /* class names / types */
+.tok-op{color:#FF7B72}   /* operators */
+.tok-id{color:#E6EDF3}   /* identifiers */
+.tok-punct{color:#E6EDF3} /* brackets, colons */
+/* Explanation tabs below code */
+.dsa-explain-body{background:var(--surface);padding:20px 22px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.dsa-exp-card{background:white;border:1px solid var(--border);border-radius:var(--r-md);padding:14px}
+.dsa-exp-title{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--ink4);margin-bottom:8px}
+.dsa-exp-body{font-size:13px;line-height:1.6;color:var(--ink2)}
+.dsa-exp-body ul{padding-left:15px;margin-top:4px}.dsa-exp-body li{margin-bottom:3px}
+.dsa-exp-body code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface);padding:1px 5px;border-radius:3px}
+@media(max-width:640px){.dsa-explain-body{grid-template-columns:1fr}}
+
+/* Copy code button */
+.dsa-copy-btn{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:rgba(240,246,255,0.6);background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);padding:5px 12px;border-radius:4px;cursor:pointer;transition:all 0.18s;white-space:nowrap}
+.dsa-copy-btn:hover{background:rgba(255,255,255,0.14);color:#F0F6FF;border-color:rgba(255,255,255,0.3)}
+.dsa-copy-btn.copied{background:rgba(63,185,80,0.2);color:#3FB950;border-color:rgba(63,185,80,0.3)}
+/* Accordion panels */
+.dsa-accordion{background:var(--navy-deep);border-top:1px solid rgba(255,255,255,0.06)}
+.dsa-acc-item{border-bottom:1px solid rgba(255,255,255,0.06)}
+.dsa-acc-header{display:flex;align-items:center;gap:10px;padding:13px 20px;cursor:pointer;user-select:none;transition:background 0.18s}
+.dsa-acc-header:hover{background:rgba(255,255,255,0.04)}
+.dsa-acc-icon{font-size:14px;flex-shrink:0}
+.dsa-acc-label{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:rgba(240,246,255,0.7);flex:1}
+.dsa-acc-badge{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;padding:2px 8px;border-radius:50px;letter-spacing:0.04em}
+.dsa-acc-chevron{font-size:10px;color:rgba(240,246,255,0.35);transition:transform 0.25s;margin-left:auto}
+.dsa-acc-item.open .dsa-acc-chevron{transform:rotate(180deg)}
+.dsa-acc-body{display:none;padding:0 20px 18px;font-size:13px;line-height:1.65;color:rgba(240,246,255,0.75)}
+.dsa-acc-item.open .dsa-acc-body{display:block}
+.dsa-acc-body ul{padding-left:18px;margin-top:6px}.dsa-acc-body li{margin-bottom:5px}
+.dsa-acc-body code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:rgba(255,255,255,0.08);padding:1px 6px;border-radius:3px;color:#79C0FF}
+.dsa-acc-body strong{color:#F0F6FF;font-weight:700}
+/* Complexity grid inside accordion */
+.complexity-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.cx-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:14px}
+.cx-card-label{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(240,246,255,0.45);margin-bottom:6px}
+.cx-card-value{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:700;margin-bottom:4px}
+.cx-time{color:#3FB950}.cx-space{color:#58A6FF}
+.cx-card-note{font-size:12px;color:rgba(240,246,255,0.55);line-height:1.5}
+/* Unit test block */
+.unit-test-block{background:rgba(0,0,0,0.3);border-radius:6px;padding:14px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#E6EDF3;white-space:pre;overflow-x:auto;line-height:1.7;margin-top:8px}
 
 /* ═══ DSA / CODING MODULE SPECIFIC ═══ */
 .topic-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
@@ -453,13 +672,13 @@ textarea{resize:vertical} textarea::placeholder,input::placeholder{color:var(--i
 /* Output section tiles */
 .output-tiles{display:flex;flex-direction:column;gap:14px}
 .output-tile{background:white;border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden}
-.ot-header{padding:12px 16px;border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:10px;background:var(--cream)}
+.ot-header{padding:12px 16px;border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:10px;background:var(--surface)}
 .ot-num{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:white;background:var(--ink);padding:2px 7px;border-radius:3px;letter-spacing:0.04em}
 .ot-title{font-size:13px;font-weight:700;color:var(--ink2)}
 .ot-body{padding:14px 16px;font-size:13px;line-height:1.65;color:var(--ink2)}
 .ot-body ul{padding-left:16px;margin:6px 0}.ot-body li{margin-bottom:4px}
 .ot-body strong{font-weight:700;color:var(--ink)}
-.ot-body code{font-family:'IBM Plex Mono',monospace;font-size:12px;background:var(--cream);padding:1px 5px;border-radius:3px;border:1px solid var(--border)}
+.ot-body code{font-family:'IBM Plex Mono',monospace;font-size:12px;background:var(--surface);padding:1px 5px;border-radius:3px;border:1px solid var(--border)}
 
 /* Mock interview mode */
 .mock-panel{background:var(--ink);border-radius:var(--r-lg);overflow:hidden;margin-bottom:18px}
@@ -474,7 +693,7 @@ textarea{resize:vertical} textarea::placeholder,input::placeholder{color:var(--i
 .hidden{display:none!important}
 .animate-in{animation:fadeSlide 0.4s ease both}
 @keyframes fadeSlide{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-@keyframes textareaFlash{0%{border-color:var(--border);background:var(--cream)}40%{border-color:var(--green);background:var(--green-bg)}100%{border-color:var(--border);background:var(--cream)}}
+@keyframes textareaFlash{0%{border-color:var(--border);background:var(--surface)}40%{border-color:var(--green);background:var(--green-bg)}100%{border-color:var(--border);background:var(--surface)}}
 .intel-ribbon{background:linear-gradient(135deg,var(--ink) 0%,#2a2620 100%);border-radius:var(--r-lg);padding:18px 22px;margin-bottom:18px;display:flex;align-items:center;gap:14px;border:1px solid rgba(200,146,42,0.2)}
 .intel-ribbon-text{color:rgba(255,255,255,0.8);font-size:13px;line-height:1.6}
 .intel-ribbon-text strong{color:var(--gold2)}
@@ -962,6 +1181,8 @@ textarea{resize:vertical} textarea::placeholder,input::placeholder{color:var(--i
     <!-- DSA Output -->
     <div id="dsaOutputView" class="hidden">
       <div id="dsaReadinessBlock"></div>
+      <!-- Code solutions panel — only for specific problem mode -->
+      <div id="dsaCodeBlock" class="hidden"></div>
       <div id="dsaOutputTiles" class="output-tiles"></div>
       <div id="dsaMockPanel" class="hidden">
         <div class="mock-panel">
@@ -1051,6 +1272,8 @@ textarea{resize:vertical} textarea::placeholder,input::placeholder{color:var(--i
 
     <div id="sysdesOutputView" class="hidden">
       <div id="sdReadinessBlock"></div>
+      <!-- Architecture Diagram — only shown for specific-system prep mode -->
+      <div id="sdDiagramBlock" class="hidden"></div>
       <div id="sdOutputTiles" class="output-tiles"></div>
       <div id="sdMockPanel" class="hidden">
         <div class="mock-panel" style="border:1px solid rgba(26,74,122,0.3)">
@@ -1816,7 +2039,7 @@ function renderResumeQuestions(data){
   });
   if(data.generalQuestions?.length){
     const gen=document.createElement('div');gen.className='fq-group animate-in';
-    gen.style.background='var(--cream)';
+    gen.style.background='var(--surface)';
     gen.innerHTML=`<div class="fq-hdr" style="background:var(--ink3)"><div class="fq-co">Across All Roles — Differentiators</div></div><div class="fq-body" id="fqbgen"></div>`;
     c.appendChild(gen);
     const gb=gen.querySelector('#fqbgen');
@@ -1964,8 +2187,20 @@ RULES:
 4. Education: exactly as original
 5. Add Certs/Awards/Publications/OSS if mentioned
 TRUTHFULNESS: NEVER invent metrics. NEVER fabricate.
-FORMAT: Plain text, ALL CAPS section headings, • bullets, no tables. Start with candidate's name.`}],SYS_WRITER,4000);
-    stop();S.resume.finalText=raw.trim();
+FORMAT RULES — CRITICAL:
+- Plain text ONLY. Absolutely NO markdown: no **bold**, no *italic*, no ## headers, no __ underline
+- Section headings in ALL CAPS only (e.g. WORK EXPERIENCE, EDUCATION, SKILLS)
+- Bullets use the • character only
+- Start with candidate's full name on the very first line
+- No horizontal rules, no === or --- separators`}],SYS_WRITER,4000);
+    stop();
+    // Strip any markdown the AI included (bold, italic, headers)
+    const stripMdText = t => t
+      .replace(/\*\*(.+?)\*\*/g,'$1')
+      .replace(/\*(.+?)\*/g,'$1')
+      .replace(/__(.+?)__/g,'$1')
+      .replace(/^#+\s+/gm,'');
+    S.resume.finalText = stripMdText(raw.trim());
     document.getElementById('rFinalPreview').textContent=S.resume.finalText;
     document.getElementById('rPrintTarget').innerHTML=buildHTMLResume(S.resume.finalText);
     streamAI([{role:'user',content:`Write 2 paragraphs of coaching notes about the resume rewrite. Candidate: ${S.resume.analysis?.candidate?.name}. Score: ${S.resume.analysis?.scores?.total}→${S.resume.reanalysis?.updatedScores?.total||S.resume.analysis?.scores?.total}. Improvements made: ${(S.resume.reanalysis?.improvements||['Improved bullet structure']).slice(0,3).join(', ')}. Explain what changed, why it's stronger, and tailoring tips.`}],SYS_COACH,document.getElementById('rCoachNotes'),600);
@@ -1973,22 +2208,111 @@ FORMAT: Plain text, ALL CAPS section headings, • bullets, no tables. Start wit
 }
 
 function buildHTMLResume(text){
-  const lines=text.split('\n');let h='<div style="font-family:Lato,sans-serif;color:#1A1814;max-width:720px;margin:0 auto;padding:36px">';
-  lines.forEach(line=>{
-    const t=line.trim(); if(!t){h+='<br/>';return;}
-    if(t===t.toUpperCase()&&t.length<60&&!t.startsWith('•')&&t.length>2)h+=`<h2 style="font-size:10px;text-transform:uppercase;letter-spacing:0.14em;border-bottom:1.5px solid #1A1814;padding-bottom:3px;margin:20px 0 9px;font-weight:700">${t}</h2>`;
-    else if(t.startsWith('•')||t.startsWith('-'))h+=`<p style="padding-left:14px;margin-bottom:4px;font-size:13px;line-height:1.55">• ${t.replace(/^[•\-]\s*/,'')}</p>`;
-    else if(t.includes('|')||/\d{4}/.test(t))h+=`<p style="font-weight:700;font-size:13.5px;margin-bottom:2px;margin-top:12px">${t}</p>`;
-    else if(h.indexOf('<h2')===-1&&h.indexOf('<p')===-1)h+=`<h1 style="font-size:24px;font-weight:700;letter-spacing:-0.02em;margin-bottom:3px">${t}</h1>`;
-    else h+=`<p style="font-size:13px;margin-bottom:3px;line-height:1.6">${t}</p>`;
-  });
-  h+='</div>';return h;
+  // Strip any markdown that the AI might have left in (bold, italic, headers)
+  const stripMd = s => s
+    .replace(/\*\*(.+?)\*\*/g, '$1')   // **bold**
+    .replace(/\*(.+?)\*/g, '$1')        // *italic*
+    .replace(/^#+\s+/,'')               // # headings
+    .replace(/__(.+?)__/g,'$1');        // __bold__
+
+  const lines = text.split('\n');
+  let html = `<div style="font-family:'Helvetica Neue',Arial,sans-serif;color:#111827;width:100%;font-size:12.5px;line-height:1.55;padding:0;margin:0">`;
+  let isFirst = true;
+  let consecutiveBlanks = 0;
+
+  for(let i = 0; i < lines.length; i++){
+    const raw = lines[i];
+    const t = stripMd(raw.trim());
+
+    // Collapse multiple blank lines into one small gap
+    if(!t){
+      consecutiveBlanks++;
+      if(consecutiveBlanks <= 1) html += `<div style="height:4px"></div>`;
+      continue;
+    }
+    consecutiveBlanks = 0;
+
+    // First non-blank line = candidate name
+    if(isFirst){
+      isFirst = false;
+      html += `<h1 style="font-size:22px;font-weight:900;letter-spacing:-0.01em;color:#0D1B2A;margin:0 0 4px;padding:0;line-height:1.1">${t}</h1>`;
+      continue;
+    }
+
+    // ALL-CAPS section heading (WORK EXPERIENCE, EDUCATION, SKILLS, PROFESSIONAL SUMMARY etc.)
+    const isAllCaps = t === t.toUpperCase() && t.length > 2 && t.length < 60 && /[A-Z]{2}/.test(t) && !/^[•\-\*\+]/.test(t);
+    if(isAllCaps){
+      html += `<div style="margin-top:14px;margin-bottom:5px;border-bottom:1.5px solid #0D1B2A;padding-bottom:3px">
+        <span style="font-size:9.5px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#0D1B2A">${t}</span>
+      </div>`;
+      continue;
+    }
+
+    // Bullet point
+    if(/^[•\-\*]/.test(t)){
+      const content = t.replace(/^[•\-\*]\s*/,'');
+      html += `<div style="display:flex;gap:7px;margin-bottom:2px;padding-left:2px">
+        <span style="flex-shrink:0;color:#374151;line-height:1.55">•</span>
+        <span style="color:#1F2937">${content}</span>
+      </div>`;
+      continue;
+    }
+
+    // Company / dates / location line — has year OR pipes/dashes
+    if(/\b(19|20)\d{2}\b/.test(t) && !isAllCaps){
+      html += `<p style="font-weight:600;font-size:12px;color:#374151;margin:0 0 2px;line-height:1.4">${t}</p>`;
+      continue;
+    }
+
+    // Contact info line (email, phone, URL, LinkedIn)
+    if(/@/.test(t) || /^\+\d/.test(t) || /linkedin|github|http/i.test(t) || /^[+\(]?\d[\d\s\-\(\)]{7,}$/.test(t)){
+      html += `<p style="font-size:11.5px;color:#4B5563;margin:1px 0;line-height:1.4">${t}</p>`;
+      continue;
+    }
+
+    // Job title / role title — title-case, no year, medium length
+    if(t.length < 70 && /^[A-Z]/.test(t) && !t.includes('. ') && t.split(' ').length <= 8){
+      // Could be a job title — render slightly bolder if it follows a section heading
+      html += `<p style="font-weight:700;font-size:12.5px;color:#0D1B2A;margin:8px 0 1px;line-height:1.4">${t}</p>`;
+      continue;
+    }
+
+    // Regular body text
+    html += `<p style="margin:2px 0;color:#1F2937;line-height:1.55">${t}</p>`;
+  }
+
+  html += `</div>`;
+  return html;
 }
 
 function downloadResumePDF(){
-  const c=document.getElementById('rPrintTarget').innerHTML;if(!c){alert('No resume generated.');return;}
-  const w=document.createElement('div');w.innerHTML=c;document.body.appendChild(w);
-  html2pdf().set({margin:[14,14,14,14],filename:'optimized-resume.pdf',image:{type:'jpeg',quality:0.97},html2canvas:{scale:2,useCORS:true},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(w).save().then(()=>document.body.removeChild(w));
+  if(!S.resume.finalText){alert('No resume generated.');return;}
+
+  // Build a fresh standalone container — never attached to the live DOM until we need it
+  const container = document.createElement('div');
+  container.style.cssText = 'position:fixed;top:0;left:0;width:794px;background:white;z-index:-9999;opacity:0;pointer-events:none;padding:0;margin:0';
+  container.innerHTML = `<div style="padding:36px 44px;background:white;min-height:auto">${buildHTMLResume(S.resume.finalText)}</div>`;
+  document.body.appendChild(container);
+
+  html2pdf()
+    .set({
+      margin: [12, 12, 12, 12],
+      filename: 'optimized-resume.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        scrollY: 0,
+        windowWidth: 794,
+        backgroundColor: '#ffffff'
+      },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['avoid-all', 'css'] }
+    })
+    .from(container)
+    .save()
+    .then(() => document.body.removeChild(container))
+    .catch(e => { document.body.removeChild(container); alert('PDF failed: ' + e.message); });
 }
 
 async function downloadResumeDOCX(){
@@ -2183,6 +2507,8 @@ async function startDSAPrep(){
     renderDSAOutput(S.dsa.output,ctx);
     document.getElementById('dsaInputView').classList.add('hidden');
     document.getElementById('dsaOutputView').classList.remove('hidden');
+    // Auto-generate code solutions for specific-problem mode
+    generateDSACode(ctx);
   }catch(e){stop();errEl.textContent=`Error: ${e.message}`;errEl.classList.remove('hidden');}
 }
 
@@ -2304,6 +2630,329 @@ function renderDSAOutput(d,ctx){
   tilesEl.innerHTML=(d.sections||[]).map((s,i)=>`<div class="output-tile animate-in"><div class="ot-header"><span class="ot-num">${String(i+1).padStart(2,'0')}</span><span class="ot-title">${s.title}</span></div><div class="ot-body">${mdLite(s.content||'')}</div></div>`).join('');
 }
 
+// ═══════════════════════════════════════════════════════════
+//  DSA CODE SOLUTIONS ENGINE
+// ═══════════════════════════════════════════════════════════
+const SYS_CODE=`You are a senior software engineer writing clean, interview-quality code with thorough comments. Be precise and concise.`;
+
+async function generateDSACode(ctx){
+  const codeBlock=document.getElementById('dsaCodeBlock');
+  codeBlock.classList.remove('hidden');
+  codeBlock.innerHTML=`<div class="dsa-code-card animate-in"><div class="dsa-code-hdr"><div class="dsa-code-title">Code Solutions</div><div class="dsa-code-badge">Generating…</div></div><div style="padding:28px;text-align:center;background:#0D1117;color:rgba(240,246,255,0.4);font-family:'IBM Plex Mono',monospace;font-size:12px">⏳ Generating brute force + optimal solutions…</div></div>`;
+
+  // ── Step 1: Get metadata (NO code in JSON — avoids newline escape bugs) ──
+  const metaPrompt=`Generate code solution metadata for this problem. Language: ${ctx.lang}. Level: ${ctx.level}.
+PROBLEM: "${ctx.problem}"
+
+Return ONLY valid JSON. Do NOT include any code — that comes separately. Use this exact structure:
+{
+  "problemTitle": "Two Sum",
+  "solutions": [
+    {
+      "id": "brute",
+      "label": "Brute Force",
+      "approach": "Check every pair of elements using two nested loops",
+      "timeComplexity": "O(n^2)",
+      "spaceComplexity": "O(1)",
+      "keyLineNumbers": [4, 6, 8],
+      "annotatedLines": [
+        { "line": 4, "note": "Outer loop: fix first element" },
+        { "line": 6, "note": "Inner loop: O(n) scan for complement — total O(n^2)" },
+        { "line": 8, "note": "Found pair — return immediately" }
+      ],
+      "walkthrough": "We iterate over every pair (i,j) where i<j. For each pair we check if their sum equals target. Return the indices on first match.",
+      "pitfalls": ["Not handling duplicates correctly", "Using same element twice (i==j)", "Returning values instead of indices"],
+      "whenToUse": "Small inputs under ~500 elements, or as a stepping stone to discuss optimization"
+    },
+    {
+      "id": "optimal",
+      "label": "Optimal — Hash Map",
+      "approach": "Use a hash map to store each element and look up the complement in O(1)",
+      "timeComplexity": "O(n)",
+      "spaceComplexity": "O(n)",
+      "keyLineNumbers": [3, 5, 6],
+      "annotatedLines": [
+        { "line": 3, "note": "Hash map: value -> index for O(1) lookup" },
+        { "line": 5, "note": "Check if complement already seen" },
+        { "line": 6, "note": "Store current element before moving to next" }
+      ],
+      "walkthrough": "Single pass: for each element, calculate its complement (target - element). If complement is already in the map, return both indices. Otherwise add current element to the map.",
+      "pitfalls": ["Adding element to map before checking complement (can use same element twice)", "Not handling no-solution case"],
+      "whenToUse": "Always prefer this in interviews — optimal time and space trade-off"
+    }
+  ],
+  "testCases": [
+    { "input": "nums=[2,7,11,15], target=9", "output": "[0,1]", "explanation": "2+7=9" },
+    { "input": "nums=[3,2,4], target=6", "output": "[1,2]", "explanation": "2+4=6" },
+    { "input": "nums=[3,3], target=6", "output": "[0,1]", "explanation": "Duplicate values" },
+    { "input": "nums=[], target=0", "output": "[]", "explanation": "Empty input edge case" }
+  ],
+  "interviewerNotes": "Interviewer expects candidate to start with brute force and naturally evolve to hash map. Must discuss time/space trade-off. Should catch the same-element-twice edge case unprompted."
+}
+Return ONLY the JSON object. Replace all example values with real ones for the actual problem.`;
+
+  // ── Step 2: Get raw code (plain text, no JSON wrapper) ──
+  const codePrompt=(solId, label)=>`Write the ${label} ${ctx.lang} solution for: "${ctx.problem}"
+
+Requirements:
+- Complete, runnable, correct code
+- Every non-trivial line must have an inline comment explaining WHY (not just what)
+- Use meaningful variable names (not a, b, i — use seen, complement, result, left, right etc.)
+- Idiomatic ${ctx.lang} style
+- Include the function signature and any imports/headers needed
+- Add 2-3 lines of comment at the top explaining the overall approach
+
+Return ONLY the raw code. No explanation, no markdown fences, no JSON.`;
+
+  try{
+    // Fire metadata + both code solutions in parallel
+    const [metaRaw, bruteCode, optimalCode] = await Promise.all([
+      callAI([{role:'user',content:metaPrompt}], SYS_CODE, 1800),
+      callAI([{role:'user',content:codePrompt('brute','brute force')}], SYS_CODE, 1000),
+      callAI([{role:'user',content:codePrompt('optimal','optimal')}], SYS_CODE, 1000)
+    ]);
+
+    const meta = safeJSON(metaRaw);
+    meta._lang = ctx.lang; // store for unit test generation
+    // Strip any accidental markdown fences from raw code
+    const cleanCode = (raw) => raw.replace(/^```[\w]*\n?/,'').replace(/\n?```\s*$/,'').trim();
+
+    // Merge code into meta solutions
+    const codeMap = { brute: cleanCode(bruteCode), optimal: cleanCode(optimalCode) };
+    (meta.solutions||[]).forEach(sol => {
+      sol.code = codeMap[sol.id] || codeMap[Object.keys(codeMap)[0]] || '';
+    });
+
+    S.dsa.codeData = meta;
+    renderDSACode(meta, ctx);
+  }catch(e){
+    codeBlock.innerHTML=`<div class="dsa-code-card"><div class="dsa-code-hdr"><div class="dsa-code-title">Code Solutions</div></div><div style="padding:20px;font-size:13px;color:var(--ink4)">Code generation failed: ${e.message}</div></div>`;
+  }
+}
+
+function renderDSACode(data, ctx){
+  const codeBlock=document.getElementById('dsaCodeBlock');
+  const solutions=data.solutions||[];
+  if(!solutions.length){codeBlock.classList.add('hidden');return;}
+
+  let activeSol=solutions[0].id;
+  const tabs=solutions.map(s=>
+    `<button class="dsa-ctab ${s.id}${s.id===activeSol?' active':''}" onclick="switchDSASolution('${s.id}')">${s.label}</button>`
+  ).join('');
+
+  codeBlock.innerHTML=`
+    <div class="dsa-code-card animate-in">
+      <div class="dsa-code-hdr">
+        <div>
+          <div class="dsa-code-title">${escHtml(data.problemTitle||'Code Solutions')}</div>
+          <div style="font-size:11px;color:rgba(240,246,255,0.4);margin-top:2px;font-family:'IBM Plex Mono',monospace">${ctx.lang} · Click line to mark · Blue = annotated · Green = key step</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <div class="dsa-code-tabs">${tabs}</div>
+          <button class="dsa-copy-btn" id="dsaCopyBtn" onclick="copyDSACode()">📋 Copy Code</button>
+        </div>
+      </div>
+      <div id="dsaCodeSolutionArea"></div>
+      <div class="dsa-accordion" id="dsaAccordion">
+        <!-- Accordion items rendered per-solution in renderDSASolutionView -->
+      </div>
+    </div>`;
+
+  window._dsaCodeData=data;
+  renderDSASolutionView(activeSol);
+}
+
+function copyDSACode(){
+  const data=window._dsaCodeData;
+  const id=window._dsaActiveSol||(data?.solutions?.[0]?.id||'brute');
+  const sol=(data?.solutions||[]).find(s=>s.id===id);
+  if(!sol?.code) return;
+  navigator.clipboard.writeText(sol.code).then(()=>{
+    const btn=document.getElementById('dsaCopyBtn');
+    if(btn){btn.textContent='✓ Copied!';btn.classList.add('copied');setTimeout(()=>{btn.textContent='📋 Copy Code';btn.classList.remove('copied')},2000);}
+  });
+}
+
+function toggleAccordion(idx){
+  const item=document.getElementById(`dsaAcc${idx}`);
+  if(item) item.classList.toggle('open');
+}
+
+function renderDSASolutionView(id){
+  window._dsaActiveSol=id;
+  const data=window._dsaCodeData;
+  const sol=(data?.solutions||[]).find(s=>s.id===id);
+  if(!sol) return;
+  const area=document.getElementById('dsaCodeSolutionArea');
+  const keySet=new Set(sol.keyLineNumbers||sol.keySteps||[]);
+  const annMap={};
+  (sol.annotatedLines||sol.annotations||[]).forEach(a=>annMap[a.line]=a.note);
+
+  const lines=(sol.code||'').split('\n');
+  const codeLinesHtml=lines.map((line,i)=>{
+    const lineNum=i+1;
+    const isKey=keySet.has(lineNum);
+    const ann=annMap[lineNum];
+    const cls=ann?'dsa-code-line annotated':isKey?'dsa-code-line key-line':'dsa-code-line';
+    return `<div class="${cls}" onclick="this.classList.toggle('dsa-user-mark')" style="cursor:pointer">
+      <span class="dcl-num">${lineNum}</span>
+      <span class="dcl-code">${syntaxHL(line)}</span>
+      ${ann?`<span class="dcl-ann">← ${escHtml(ann)}</span>`:''}
+    </div>`;
+  }).join('');
+
+  area.innerHTML=`
+    <div class="dsa-code-meta">
+      <span class="dsa-meta-pill dmp-time">⏱ ${escHtml(sol.timeComplexity||'—')}</span>
+      <span class="dsa-meta-pill dmp-space">📦 ${escHtml(sol.spaceComplexity||'—')}</span>
+      <span class="dsa-code-meta-desc">${escHtml(sol.approach||'')}</span>
+    </div>
+    <div class="dsa-code-body">
+      <pre class="dsa-code-pre" id="dsaCodePre">${codeLinesHtml}</pre>
+    </div>`;
+
+  // Build accordion: Complexity | Edge Cases | Test Cases
+  const testCases=data.testCases||[];
+  const testRows=testCases.map(tc=>
+    `<tr style="border-top:1px solid rgba(255,255,255,0.06)">
+      <td style="padding:8px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#79C0FF">${escHtml(tc.input)}</td>
+      <td style="padding:8px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#3FB950;font-weight:700">${escHtml(tc.output)}</td>
+      <td style="padding:8px 10px;font-size:12px;color:rgba(240,246,255,0.55)">${escHtml(tc.explanation||'')}</td>
+    </tr>`
+  ).join('');
+
+  // Generate unit test stubs per language
+  const langId=data._lang||'';
+  const unitTests=generateUnitTestStub(sol, data.testCases||[], data.problemTitle||'solution', langId);
+
+  const pitfalls=(sol.pitfalls||[]).map(p=>`<li>${escHtml(p)}</li>`).join('');
+  const walkthrough=mdLite(sol.walkthrough||'');
+
+  const acc=document.getElementById('dsaAccordion');
+  acc.innerHTML=`
+    <!-- Complexity Analysis -->
+    <div class="dsa-acc-item" id="dsaAcc0">
+      <div class="dsa-acc-header" onclick="toggleAccordion(0)">
+        <span class="dsa-acc-icon">⚡</span>
+        <span class="dsa-acc-label">Complexity Analysis</span>
+        <span class="dsa-acc-badge" style="background:rgba(63,185,80,0.15);color:#3FB950;border:1px solid rgba(63,185,80,0.25)">Time: ${escHtml(sol.timeComplexity||'—')} · Space: ${escHtml(sol.spaceComplexity||'—')}</span>
+        <span class="dsa-acc-chevron">▼</span>
+      </div>
+      <div class="dsa-acc-body">
+        <div class="complexity-grid">
+          <div class="cx-card">
+            <div class="cx-card-label">Time Complexity</div>
+            <div class="cx-card-value cx-time">${escHtml(sol.timeComplexity||'—')}</div>
+            <div class="cx-card-note">${escHtml(sol.timeNote||'Based on the primary loop/recursion structure of this solution.')}</div>
+          </div>
+          <div class="cx-card">
+            <div class="cx-card-label">Space Complexity</div>
+            <div class="cx-card-value cx-space">${escHtml(sol.spaceComplexity||'—')}</div>
+            <div class="cx-card-note">${escHtml(sol.spaceNote||'Extra memory used beyond the input (auxiliary space).')}</div>
+          </div>
+        </div>
+        <strong>Step-by-Step Walkthrough</strong>
+        <div style="margin-top:8px">${walkthrough}</div>
+        ${pitfalls?`<div style="margin-top:12px"><strong>Common Pitfalls</strong><ul style="margin-top:6px">${pitfalls}</ul></div>`:''}
+      </div>
+    </div>
+    <!-- Edge Cases -->
+    <div class="dsa-acc-item" id="dsaAcc1">
+      <div class="dsa-acc-header" onclick="toggleAccordion(1)">
+        <span class="dsa-acc-icon">🔍</span>
+        <span class="dsa-acc-label">Edge Cases</span>
+        <span class="dsa-acc-badge" style="background:rgba(232,168,48,0.12);color:#E8A830;border:1px solid rgba(232,168,48,0.2)">${testCases.length} cases</span>
+        <span class="dsa-acc-chevron">▼</span>
+      </div>
+      <div class="dsa-acc-body">
+        <div style="margin-bottom:10px;color:rgba(240,246,255,0.6);font-size:12px">These are the edge cases the interviewer will check. Always mention them before they ask.</div>
+        <table style="width:100%;border-collapse:collapse;border:1px solid rgba(255,255,255,0.08);border-radius:6px;overflow:hidden">
+          <thead><tr style="background:rgba(255,255,255,0.06)">
+            <th style="padding:8px 10px;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(240,246,255,0.45);text-transform:uppercase;letter-spacing:0.08em;font-weight:700">Input</th>
+            <th style="padding:8px 10px;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(240,246,255,0.45);text-transform:uppercase;letter-spacing:0.08em;font-weight:700">Expected</th>
+            <th style="padding:8px 10px;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(240,246,255,0.45);text-transform:uppercase;letter-spacing:0.08em;font-weight:700">Why It Matters</th>
+          </tr></thead>
+          <tbody>${testRows}</tbody>
+        </table>
+        ${sol.whenToUse?`<div style="margin-top:12px;padding:10px 14px;background:rgba(88,166,255,0.08);border:1px solid rgba(88,166,255,0.15);border-radius:6px;font-size:12px;color:rgba(240,246,255,0.7)"><strong style="color:#58A6FF">When to use this approach:</strong> ${escHtml(sol.whenToUse)}</div>`:''}
+      </div>
+    </div>
+    <!-- Unit Test Cases -->
+    <div class="dsa-acc-item" id="dsaAcc2">
+      <div class="dsa-acc-header" onclick="toggleAccordion(2)">
+        <span class="dsa-acc-icon">🧪</span>
+        <span class="dsa-acc-label">Unit Test Cases</span>
+        <span class="dsa-acc-badge" style="background:rgba(139,92,246,0.12);color:#A78BFA;border:1px solid rgba(139,92,246,0.2)">Ready to run</span>
+        <button class="dsa-copy-btn" style="margin-left:auto;margin-right:8px" onclick="event.stopPropagation();copyUnitTests('dsaUnitTestCode')">📋 Copy</button>
+        <span class="dsa-acc-chevron">▼</span>
+      </div>
+      <div class="dsa-acc-body">
+        <div style="margin-bottom:8px;font-size:12px;color:rgba(240,246,255,0.5)">Paste these into your IDE or LeetCode to verify your solution.</div>
+        <div class="unit-test-block" id="dsaUnitTestCode">${escHtml(unitTests)}</div>
+      </div>
+    </div>
+    ${data.interviewerNotes?`<div style="padding:14px 20px;font-size:12px;line-height:1.6;color:rgba(240,246,255,0.6);border-top:1px solid rgba(255,255,255,0.06)"><strong style="font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:0.07em;color:var(--gold);display:block;margin-bottom:4px">Interviewer Notes</strong>${escHtml(data.interviewerNotes)}</div>`:''}`;
+}
+
+function switchDSASolution(id){
+  window._dsaActiveSol=id;
+  document.querySelectorAll('.dsa-ctab').forEach(t=>{
+    t.classList.remove('active');
+    if(t.classList.contains(id)) t.classList.add('active');
+  });
+  renderDSASolutionView(id);
+}
+function copyUnitTests(elId){
+  const el=document.getElementById(elId);
+  if(!el) return;
+  navigator.clipboard.writeText(el.textContent).then(()=>{
+    const btn=event.target.closest('button');
+    if(btn){btn.textContent='✓ Copied!';setTimeout(()=>btn.textContent='📋 Copy',1800);}
+  });
+}
+
+function generateUnitTestStub(sol, testCases, fnName, lang){
+  const fn=fnName.toLowerCase().replace(/[^a-z0-9]/g,'_').replace(/_+/g,'_');
+  const cases=testCases.slice(0,4);
+  if(!cases.length) return `# No test cases available`;
+
+  // Detect language from stored context or default to Python
+  const isJS=lang&&(lang.toLowerCase().includes('javascript')||lang.toLowerCase().includes('typescript'));
+  const isJava=lang&&lang.toLowerCase().includes('java');
+
+  if(isJS){
+    return `// Unit tests — paste into Node.js or your browser console\nconst assert = require('assert');\n\n${cases.map((tc,i)=>`// Test ${i+1}: ${tc.explanation||''}\n// Input:    ${tc.input}\n// Expected: ${tc.output}\nassert.deepStrictEqual(solution(/* ${tc.input} */), /* ${tc.output} */, 'Test ${i+1} failed');`).join('\n\n')}\n\nconsole.log('All tests passed ✓');`;
+  } else if(isJava){
+    return `import org.junit.Test;\nimport static org.junit.Assert.*;\n\npublic class SolutionTest {\n${cases.map((tc,i)=>`    @Test\n    public void test${i+1}() {\n        // ${tc.explanation||''}\n        // Input: ${tc.input}\n        // Expected: ${tc.output}\n        Solution sol = new Solution();\n        assertEquals(/* expected: ${tc.output} */, sol.${fn}(/* ${tc.input} */));\n    }`).join('\n\n')}\n}`;
+  } else {
+    // Python default
+    return `import pytest\n\n# Paste your solution above this block\n\n${cases.map((tc,i)=>`def test_case_${i+1}():\n    # ${tc.explanation||''}\n    # Input:    ${tc.input}\n    # Expected: ${tc.output}\n    assert ${fn}(${tc.input}) == ${tc.output}`).join('\n\n')}\n\nif __name__ == '__main__':\n    pytest.main([__file__, '-v'])`;
+  }
+}
+
+// ── Lightweight syntax highlighter ────────────────────────────
+function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function syntaxHL(line){
+  const s=escHtml(line);
+  // Order matters — comments first, then strings, then keywords
+  return s
+    // Comments (Python # and C-style //)
+    .replace(/(#.*$|\/\/.*$)/g,'<span class="tok-cmt">$1</span>')
+    // Strings
+    .replace(/(&quot;[^&]*?&quot;|'[^']*?')/g,'<span class="tok-str">$1</span>')
+    // Python/JS keywords
+    .replace(/\b(def|class|return|if|elif|else|for|while|in|not|and|or|import|from|with|as|try|except|finally|pass|break|continue|yield|lambda|async|await|const|let|var|function|new|this|typeof|instanceof|void|null|undefined|true|false|None|True|False|self|cls)\b/g,'<span class="tok-kw">$1</span>')
+    // Java/C++ keywords
+    .replace(/\b(public|private|protected|static|void|int|long|String|boolean|char|float|double|new|class|interface|extends|implements|throws|throw|return|if|else|for|while|do|switch|case|break|continue|null|true|false)\b/g,'<span class="tok-kw">$1</span>')
+    // Numbers
+    .replace(/\b(\d+)\b/g,'<span class="tok-num">$1</span>')
+    // Function calls: word followed by (
+    .replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)(\s*\()/g,'<span class="tok-fn">$1</span>$2')
+    // Type annotations / class names (Capitalised)
+    .replace(/\b([A-Z][a-zA-Z0-9_]*)\b/g,'<span class="tok-cls">$1</span>');
+}
+
 async function startDSAMock(ctx){
   const problem=ctx.problem&&ctx.problem.length>5?ctx.problem:'a well-chosen problem appropriate for this level and company';
   document.getElementById('dsaInputView').classList.add('hidden');
@@ -2347,6 +2996,8 @@ function resetDSA(){
   document.getElementById('dsaMockMsgs').innerHTML='';
   document.getElementById('dsaOutputTiles').innerHTML='';
   document.getElementById('dsaReadinessBlock').innerHTML='';
+  document.getElementById('dsaCodeBlock').innerHTML='';
+  document.getElementById('dsaCodeBlock').classList.add('hidden');
   document.getElementById('dsaInputError').classList.add('hidden');
   const prob=document.getElementById('dsaProblem'); if(prob) prob.value='';
   // Reset mode UI
@@ -2414,6 +3065,8 @@ async function startSysdesPrep(){
     renderSdOutput(S.sd.output,ctx);
     document.getElementById('sysdesInputView').classList.add('hidden');
     document.getElementById('sysdesOutputView').classList.remove('hidden');
+    // Auto-generate architecture diagram for specific problem mode
+    generateSdDiagram(ctx);
   }catch(e){stop();errEl.textContent=`Error: ${e.message}`;errEl.classList.remove('hidden');}
 }
 
@@ -2537,6 +3190,269 @@ function renderSdOutput(d,ctx){
   document.getElementById('sdOutputTiles').innerHTML=(d.sections||[]).map((s,i)=>`<div class="output-tile animate-in"><div class="ot-header"><span class="ot-num">${String(i+1).padStart(2,'0')}</span><span class="ot-title">${s.title}</span></div><div class="ot-body">${mdLite(s.content||'')}</div></div>`).join('');
 }
 
+// ═══════════════════════════════════════════════════════════
+//  SYSTEM DESIGN DIAGRAM ENGINE
+// ═══════════════════════════════════════════════════════════
+const SD_DIAGRAM_SYSTEM = `You are a principal engineer generating structured architecture diagram data. Return ONLY valid JSON. No markdown, no explanation.`;
+
+async function generateSdDiagram(ctx){
+  const diagBlock = document.getElementById('sdDiagramBlock');
+  diagBlock.classList.remove('hidden');
+  diagBlock.innerHTML = `<div class="sd-diagram-card animate-in"><div class="sd-diagram-hdr"><div class="sd-diagram-title">Architecture Diagrams</div><div class="sd-diagram-badge">Generating…</div></div><div style="padding:32px;text-align:center;color:var(--ink4);font-family:\'IBM Plex Mono\',monospace;font-size:12px;background:var(--surface)">⏳ Generating HLD &amp; LLD diagrams…</div></div>`;
+
+  const prompt = `Generate architecture diagram data for: "${ctx.problem}".
+Context: ${ctx.context||'standard scale'} | Role: ${ctx.role} | Level: ${ctx.level}
+
+Return ONLY valid JSON with this exact structure:
+{
+  "hld": {
+    "title": "High-Level Design — <system name>",
+    "description": "One sentence describing the overall architecture approach",
+    "nodes": [
+      {
+        "id": "client",
+        "label": "Web / Mobile Client",
+        "sublabel": "Browser / iOS / Android",
+        "type": "client",
+        "x": 80, "y": 200,
+        "lld": {
+          "description": "End-user interface consuming the API",
+          "responsibilities": ["Render UI", "Handle auth tokens", "Optimistic updates"],
+          "tech": ["React", "React Native", "Service Worker"],
+          "interfaces": ["REST API over HTTPS", "WebSocket for real-time"],
+          "considerations": ["CDN-served static assets", "Offline support via cache"]
+        }
+      }
+    ],
+    "edges": [
+      { "from": "client", "to": "api_gateway", "label": "HTTPS / REST", "style": "solid" }
+    ]
+  },
+  "lld_design2": {
+    "title": "Alternative Design — <variant name e.g. Event-Driven>",
+    "description": "One sentence on how this variant differs",
+    "nodes": [],
+    "edges": []
+  }
+}
+
+Node types (use exactly): client, cdn, load_balancer, api_gateway, service, cache, database, queue, storage, external, monitoring
+
+Node placement rules — use a LEFT-TO-RIGHT flow:
+- Clients: x=80
+- CDN/LB/Gateway: x=240
+- Core services: x=420
+- Databases/Cache/Queue: x=620
+- External/Storage: x=800
+- y values: distribute vertically with 100px spacing, starting at y=80
+
+Include 8-14 nodes for HLD covering the complete request flow. Include real technology names in sublabels:
+- API Gateway: "Kong / AWS API GW"
+- Load Balancer: "NGINX / AWS ALB"  
+- Cache: "Redis / Memcached"
+- Database: "PostgreSQL / MySQL" or "DynamoDB / Cassandra" depending on system
+- Queue: "Kafka / RabbitMQ / SQS"
+- Storage: "S3 / GCS"
+- Monitoring: "Datadog / Prometheus + Grafana"
+
+Each node must have a complete lld object with responsibilities, tech, interfaces, and considerations.
+Edge styles: "solid" for synchronous, "dashed" for async/events.
+
+The second design (lld_design2) should be a genuine architectural alternative — e.g., if design 1 is REST/synchronous, design 2 should be event-driven/async or a different scaling approach. Include 6-10 nodes.
+
+Return ONLY the JSON object.`;
+
+  try {
+    const raw = await callAI([{role:'user', content:prompt}], SD_DIAGRAM_SYSTEM, 3500);
+    const data = safeJSON(raw);
+    S.sd.diagrams = data;
+    renderSdDiagram(data);
+  } catch(e){
+    diagBlock.innerHTML = `<div class="sd-diagram-card"><div class="sd-diagram-hdr"><div class="sd-diagram-title">Architecture Diagram</div></div><div style="padding:20px;font-size:13px;color:var(--ink4)">Diagram generation failed: ${e.message}</div></div>`;
+  }
+}
+
+// Node type → visual style
+const NODE_STYLES = {
+  client:       { fill:'#1A4A7A', stroke:'#1A4A7A', textFill:'#fff', icon:'👤' },
+  cdn:          { fill:'#7C3AED', stroke:'#7C3AED', textFill:'#fff', icon:'🌐' },
+  load_balancer:{ fill:'#0E7490', stroke:'#0E7490', textFill:'#fff', icon:'⚖️' },
+  api_gateway:  { fill:'#065F46', stroke:'#065F46', textFill:'#fff', icon:'🚪' },
+  service:      { fill:'#1A5C35', stroke:'#1A5C35', textFill:'#fff', icon:'⚙️' },
+  cache:        { fill:'#B45309', stroke:'#B45309', textFill:'#fff', icon:'⚡' },
+  database:     { fill:'#991B1B', stroke:'#991B1B', textFill:'#fff', icon:'🗄️' },
+  queue:        { fill:'#6B21A8', stroke:'#6B21A8', textFill:'#fff', icon:'📬' },
+  storage:      { fill:'#4B5563', stroke:'#4B5563', textFill:'#fff', icon:'💾' },
+  external:     { fill:'#374151', stroke:'#374151', textFill:'#fff', icon:'🔌' },
+  monitoring:   { fill:'#1A4A7A', stroke:'#1A4A7A', textFill:'#fff', icon:'📊' }
+};
+
+function renderSdDiagram(data){
+  const diagBlock = document.getElementById('sdDiagramBlock');
+  const designs = [
+    { key:'hld', label:'HLD — Primary Design' },
+    { key:'lld_design2', label:'HLD — Alternative Design' }
+  ];
+  // Filter to designs with nodes
+  const available = designs.filter(d => data[d.key]?.nodes?.length > 0);
+  if(!available.length){ diagBlock.classList.add('hidden'); return; }
+
+  let activeDiagram = available[0].key;
+
+  const tabs = available.map(d =>
+    `<button class="sd-dtab${d.key===activeDiagram?' active':''}" onclick="switchSdDiagram('${d.key}')">${d.label}</button>`
+  ).join('');
+
+  diagBlock.innerHTML = `
+    <div class="sd-diagram-card animate-in">
+      <div class="sd-diagram-hdr">
+        <div>
+          <div class="sd-diagram-title" id="sdDiagTitle">${data[activeDiagram]?.title||'System Architecture'}</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:3px;font-family:'IBM Plex Mono',monospace" id="sdDiagDesc">${data[activeDiagram]?.description||''}</div>
+        </div>
+        <div class="sd-diagram-tabs">${tabs}</div>
+      </div>
+      <div class="sd-canvas-wrap" id="sdCanvasWrap">
+        <div id="sdSvgContainer"></div>
+      </div>
+      <div id="sdLldPanel" class="sd-lld-panel hidden"></div>
+    </div>`;
+
+  window._sdDiagrams = data;
+  drawSdDiagram(activeDiagram);
+}
+
+function switchSdDiagram(key){
+  window._sdActiveDiagram = key;
+  const data = window._sdDiagrams;
+  document.querySelectorAll('.sd-dtab').forEach(t => {
+    t.classList.toggle('active', t.textContent.includes(key==='hld'?'Primary':'Alternative'));
+  });
+  document.getElementById('sdDiagTitle').textContent = data[key]?.title||'';
+  document.getElementById('sdDiagDesc').textContent = data[key]?.description||'';
+  document.getElementById('sdLldPanel').classList.add('hidden');
+  drawSdDiagram(key);
+}
+
+function drawSdDiagram(key){
+  const data = window._sdDiagrams;
+  const design = data[key];
+  if(!design?.nodes?.length) return;
+
+  const nodes = design.nodes;
+  const edges = design.edges||[];
+
+  // Calculate canvas size from node positions
+  const maxX = Math.max(...nodes.map(n=>n.x||0)) + 180;
+  const maxY = Math.max(...nodes.map(n=>n.y||0)) + 120;
+  const W = Math.max(900, maxX);
+  const H = Math.max(380, maxY);
+
+  const NODE_W = 130, NODE_H = 54;
+
+  // Build edge paths
+  const edgeSvg = edges.map(e => {
+    const from = nodes.find(n=>n.id===e.from);
+    const to   = nodes.find(n=>n.id===e.to);
+    if(!from||!to) return '';
+    const x1=from.x+NODE_W, y1=from.y+NODE_H/2;
+    const x2=to.x,           y2=to.y+NODE_H/2;
+    const mx=(x1+x2)/2;
+    const isDashed = e.style==='dashed';
+    const midY1=y1, midY2=y2;
+    const path=`M${x1},${y1} C${mx},${midY1} ${mx},${midY2} ${x2},${y2}`;
+    const lx=(x1+x2)/2, ly=(y1+y2)/2-10;
+    return `
+      <path d="${path}" class="sd-edge" stroke-dasharray="${isDashed?'6,4':'none'}" marker-end="url(#arrow)"/>
+      ${e.label?`<text x="${lx}" y="${ly}" class="sd-edge-label">${e.label}</text>`:''}`;
+  }).join('');
+
+  // Build node rects
+  const nodeSvg = nodes.map(n => {
+    const style = NODE_STYLES[n.type||'service'] || NODE_STYLES.service;
+    const x=n.x||0, y=n.y||0;
+    const label = n.label||n.id;
+    const sub = n.sublabel||'';
+    const hasLLD = n.lld && (n.lld.responsibilities?.length || n.lld.tech?.length);
+    return `
+      <g class="sd-node" onclick="showNodeLLD('${key}','${n.id}')" data-id="${n.id}">
+        <rect x="${x}" y="${y}" width="${NODE_W}" height="${NODE_H}" rx="8" ry="8"
+          fill="${style.fill}" stroke="${style.stroke}" stroke-width="1.5" class="sd-node-box"/>
+        ${hasLLD?`<rect x="${x+NODE_W-16}" y="${y+2}" width="14" height="14" rx="3" fill="rgba(255,255,255,0.2)"/>
+          <text x="${x+NODE_W-9}" y="${y+11}" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="8" font-family="IBM Plex Mono" font-weight="700">LLD</text>`:''}
+        <text x="${x+18}" y="${y+17}" class="sd-node-icon" font-size="13">${style.icon}</text>
+        <text x="${x+NODE_W/2+4}" y="${sub?y+20:y+28}" class="sd-node-label" fill="${style.textFill}" font-size="11">${label}</text>
+        ${sub?`<text x="${x+NODE_W/2+4}" y="${y+35}" class="sd-node-sublabel" fill="${style.textFill}" font-size="9">${sub}</text>`:''}
+      </g>`;
+  }).join('');
+
+  document.getElementById('sdSvgContainer').innerHTML = `
+    <svg class="sd-svg-canvas" width="${W+40}" height="${H+40}" viewBox="-20 -20 ${W+40} ${H+40}"
+         xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5"
+          markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#B0ADA5"/>
+        </marker>
+      </defs>
+      <!-- Grid background -->
+      <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
+        <path d="M 30 0 L 0 0 0 30" fill="none" stroke="rgba(0,0,0,0.04)" stroke-width="0.5"/>
+      </pattern>
+      <rect x="-20" y="-20" width="${W+40}" height="${H+40}" fill="url(#grid)"/>
+      <!-- Edges (drawn first, under nodes) -->
+      ${edgeSvg}
+      <!-- Nodes -->
+      ${nodeSvg}
+    </svg>`;
+}
+
+function showNodeLLD(diagramKey, nodeId){
+  const data = window._sdDiagrams;
+  const node = (data[diagramKey]?.nodes||[]).find(n=>n.id===nodeId);
+  if(!node?.lld) return;
+  const lld = node.lld;
+  const style = NODE_STYLES[node.type||'service']||NODE_STYLES.service;
+  const panel = document.getElementById('sdLldPanel');
+
+  // Highlight selected node
+  document.querySelectorAll('.sd-node rect:first-child').forEach(r => r.style.filter='');
+  const nodeEl = document.querySelector(`.sd-node[data-id="${nodeId}"] .sd-node-box`);
+  if(nodeEl) nodeEl.style.filter='brightness(1.3) drop-shadow(0 0 6px rgba(255,255,255,0.4))';
+
+  const sections = [
+    { title:'Responsibilities', content: (lld.responsibilities||[]).map(r=>`<li>${r}</li>`).join('') },
+    { title:'Technology / Stack', content: (lld.tech||[]).map(t=>`<li><code>${t}</code></li>`).join('') },
+    { title:'Interfaces', content: (lld.interfaces||[]).map(i=>`<li>${i}</li>`).join('') },
+    { title:'Design Considerations', content: (lld.considerations||[]).map(c=>`<li>${c}</li>`).join('') }
+  ].filter(s=>s.content);
+
+  panel.innerHTML = `
+    <div class="sd-lld-hdr" style="background:${style.fill}">
+      <div style="font-size:18px">${style.icon}</div>
+      <div>
+        <div class="sd-lld-title">${node.label} — Low Level Design</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.55);font-family:'IBM Plex Mono',monospace;margin-top:2px">${lld.description||''}</div>
+      </div>
+      <button class="sd-lld-close" onclick="closeLldPanel()">✕</button>
+    </div>
+    <div class="sd-lld-body">
+      ${sections.map(s=>`
+        <div class="sd-lld-section">
+          <div class="sd-lld-sec-title">${s.title}</div>
+          <div class="sd-lld-content"><ul>${s.content}</ul></div>
+        </div>`).join('')}
+    </div>`;
+
+  panel.classList.remove('hidden');
+  panel.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function closeLldPanel(){
+  document.getElementById('sdLldPanel').classList.add('hidden');
+  document.querySelectorAll('.sd-node .sd-node-box').forEach(r=>r.style.filter='');
+}
+
 async function startSdMock(ctx){
   const problem=ctx.problem||'a system appropriate for your level and company type';
   document.getElementById('sysdesInputView').classList.add('hidden');
@@ -2578,6 +3494,8 @@ function resetSysdes(){
   document.getElementById('sdMockMsgs').innerHTML='';
   document.getElementById('sdOutputTiles').innerHTML='';
   document.getElementById('sdReadinessBlock').innerHTML='';
+  document.getElementById('sdDiagramBlock').innerHTML='';
+  document.getElementById('sdDiagramBlock').classList.add('hidden');
   document.getElementById('sdInputError').classList.add('hidden');
   const prob=document.getElementById('sdProblem'); if(prob) prob.value='';
   const ctx=document.getElementById('sdContext'); if(ctx) ctx.value='';
