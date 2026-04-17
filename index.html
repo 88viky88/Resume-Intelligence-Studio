@@ -576,6 +576,19 @@ textarea{resize:vertical} textarea::placeholder,input::placeholder{color:var(--i
 .sd-lld-content code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface);padding:1px 5px;border-radius:3px}
 @media(max-width:640px){.sd-lld-body{grid-template-columns:1fr}}
 
+/* Fullscreen code modal */
+.code-fullscreen-overlay{position:fixed;inset:0;background:rgba(13,27,42,0.96);backdrop-filter:blur(8px);z-index:500;display:flex;flex-direction:column;overflow:hidden}
+.code-fs-hdr{background:#0D1117;padding:12px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,0.08);flex-shrink:0}
+.code-fs-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:600;color:#F0F6FF;flex:1}
+.code-fs-close{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);color:#F0F6FF;padding:6px 14px;border-radius:6px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.18s}
+.code-fs-close:hover{background:rgba(255,255,255,0.14)}
+.code-fs-body{flex:1;overflow:auto;padding:20px 24px}
+.code-fs-body .dsa-code-pre{font-size:14px;line-height:1.8}
+
+/* Expand button on code card */
+.dsa-expand-btn{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:rgba(240,246,255,0.55);background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);padding:5px 10px;border-radius:4px;cursor:pointer;transition:all 0.18s;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
+.dsa-expand-btn:hover{background:rgba(255,255,255,0.12);color:#F0F6FF}
+
 /* ═══ DSA CODE VIEWER ═══ */
 .dsa-code-card{background:white;border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;margin-bottom:18px}
 .dsa-code-hdr{background:#0D1117;padding:16px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
@@ -1295,6 +1308,20 @@ textarea{resize:vertical} textarea::placeholder,input::placeholder{color:var(--i
       </div>
     </div>
   </div>
+</div>
+
+<!-- Fullscreen code modal -->
+<div class="code-fullscreen-overlay hidden" id="codeFullscreenModal">
+  <div class="code-fs-hdr">
+    <div class="code-fs-title" id="codeFsTitle">Code Solutions</div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div class="dsa-code-tabs" id="codeFsTabs"></div>
+      <button class="dsa-copy-btn" onclick="copyDSACode()">📋 Copy</button>
+      <button class="code-fs-close" onclick="closeCodeFullscreen()">✕ Close</button>
+    </div>
+  </div>
+  <div class="dsa-code-meta" id="codeFsMeta" style="flex-shrink:0"></div>
+  <div class="code-fs-body" id="codeFsBody"></div>
 </div>
 
 </div><!-- /app -->
@@ -2288,31 +2315,34 @@ function buildHTMLResume(text){
 function downloadResumePDF(){
   if(!S.resume.finalText){alert('No resume generated.');return;}
 
-  // Build a fresh standalone container — never attached to the live DOM until we need it
-  const container = document.createElement('div');
-  container.style.cssText = 'position:fixed;top:0;left:0;width:794px;background:white;z-index:-9999;opacity:0;pointer-events:none;padding:0;margin:0';
-  container.innerHTML = `<div style="padding:36px 44px;background:white;min-height:auto">${buildHTMLResume(S.resume.finalText)}</div>`;
-  document.body.appendChild(container);
+  const resumeBody = buildHTMLResume(S.resume.finalText);
+
+  // Wrap in a complete self-contained HTML string with all styles inline.
+  // html2pdf().from(htmlString, 'string') creates its own isolated render context
+  // — completely immune to the app's dark navy CSS.
+  const htmlString = `
+    <html><head><meta charset="UTF-8"><style>
+      *{box-sizing:border-box;margin:0;padding:0}
+      body{background:#fff;color:#111;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.55;padding:36px 44px}
+      h1{font-size:20px;font-weight:900;color:#0a0a0a;margin:0 0 4px;letter-spacing:-0.01em}
+      h2{font-size:9.5px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#0a0a0a;border-bottom:1.5px solid #0a0a0a;padding-bottom:3px;margin:14px 0 6px}
+      p{margin:2px 0;color:#1F2937;font-size:12px;line-height:1.5}
+      ul{padding-left:16px;margin:3px 0}
+      li{margin-bottom:2px;color:#1F2937;font-size:12px}
+    </style></head><body>${resumeBody}</body></html>`;
 
   html2pdf()
     .set({
-      margin: [12, 12, 12, 12],
+      margin: [10, 10, 10, 10],
       filename: 'optimized-resume.pdf',
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: {
-        scale: 2,
-        useCORS: true,
-        scrollY: 0,
-        windowWidth: 794,
-        backgroundColor: '#ffffff'
-      },
+      html2canvas: { scale: 2, useCORS: true, logging: false },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
       pagebreak: { mode: ['avoid-all', 'css'] }
     })
-    .from(container)
+    .from(htmlString, 'string')
     .save()
-    .then(() => document.body.removeChild(container))
-    .catch(e => { document.body.removeChild(container); alert('PDF failed: ' + e.message); });
+    .catch(e => alert('PDF error: ' + e.message));
 }
 
 async function downloadResumeDOCX(){
@@ -2749,6 +2779,7 @@ function renderDSACode(data, ctx){
         </div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
           <div class="dsa-code-tabs">${tabs}</div>
+          <button class="dsa-expand-btn" onclick="openCodeFullscreen()">⛶ Fullscreen</button>
           <button class="dsa-copy-btn" id="dsaCopyBtn" onclick="copyDSACode()">📋 Copy Code</button>
         </div>
       </div>
@@ -2768,9 +2799,82 @@ function copyDSACode(){
   const sol=(data?.solutions||[]).find(s=>s.id===id);
   if(!sol?.code) return;
   navigator.clipboard.writeText(sol.code).then(()=>{
-    const btn=document.getElementById('dsaCopyBtn');
-    if(btn){btn.textContent='✓ Copied!';btn.classList.add('copied');setTimeout(()=>{btn.textContent='📋 Copy Code';btn.classList.remove('copied')},2000);}
+    ['dsaCopyBtn','codeFsCopyBtn'].forEach(btnId=>{
+      const btn=document.getElementById(btnId);
+      if(btn){btn.textContent='✓ Copied!';btn.classList.add('copied');setTimeout(()=>{btn.textContent='📋 Copy Code';btn.classList.remove('copied')},2000);}
+    });
   });
+}
+
+function openCodeFullscreen(){
+  const data=window._dsaCodeData;
+  if(!data) return;
+  const id=window._dsaActiveSol||(data?.solutions?.[0]?.id||'brute');
+  const sol=(data?.solutions||[]).find(s=>s.id===id);
+  if(!sol) return;
+
+  const modal=document.getElementById('codeFullscreenModal');
+  document.getElementById('codeFsTitle').textContent=data.problemTitle||'Code Solutions';
+
+  // Recreate tabs in fullscreen header
+  const tabs=(data.solutions||[]).map(s=>
+    `<button class="dsa-ctab ${s.id}${s.id===id?' active':''}" onclick="switchDSASolution('${s.id}');renderCodeFullscreenSolution('${s.id}')">${s.label}</button>`
+  ).join('');
+  document.getElementById('codeFsTabs').innerHTML=tabs;
+
+  // Render the active solution into fullscreen
+  renderCodeFullscreenSolution(id);
+
+  modal.classList.remove('hidden');
+  document.body.style.overflow='hidden';
+}
+
+function renderCodeFullscreenSolution(id){
+  const data=window._dsaCodeData;
+  const sol=(data?.solutions||[]).find(s=>s.id===id);
+  if(!sol) return;
+
+  // Sync inline tabs too
+  document.querySelectorAll('.dsa-ctab').forEach(t=>{
+    t.classList.remove('active');
+    if(t.classList.contains(id)) t.classList.add('active');
+  });
+
+  const meta=document.getElementById('codeFsMeta');
+  meta.innerHTML=`
+    <span class="dsa-meta-pill dmp-time" style="margin:0 16px 0 20px">⏱ ${escHtml(sol.timeComplexity||'—')}</span>
+    <span class="dsa-meta-pill dmp-space">📦 ${escHtml(sol.spaceComplexity||'—')}</span>
+    <span class="dsa-code-meta-desc" style="padding:0 20px">${escHtml(sol.approach||'')}</span>`;
+
+  const keySet=new Set(sol.keyLineNumbers||sol.keySteps||[]);
+  const annMap={};
+  (sol.annotatedLines||sol.annotations||[]).forEach(a=>annMap[a.line]=a.note);
+  const lines=(sol.code||'').split('\n');
+  const codeHtml=lines.map((line,i)=>{
+    const n=i+1;
+    const isKey=keySet.has(n);
+    const ann=annMap[n];
+    const cls=ann?'dsa-code-line annotated':isKey?'dsa-code-line key-line':'dsa-code-line';
+    return `<div class="${cls}" onclick="this.classList.toggle('dsa-user-mark')" style="cursor:pointer">
+      <span class="dcl-num">${n}</span>
+      <span class="dcl-code">${syntaxHL(line)}</span>
+      ${ann?`<span class="dcl-ann">← ${escHtml(ann)}</span>`:''}
+    </div>`;
+  }).join('');
+
+  document.getElementById('codeFsBody').innerHTML=`
+    <div style="background:#0D1117;border-radius:var(--r-md);overflow:hidden">
+      <pre class="dsa-code-pre" style="font-size:14px;line-height:1.8">${codeHtml}</pre>
+    </div>`;
+
+  window._dsaActiveSol=id;
+}
+
+function closeCodeFullscreen(){
+  document.getElementById('codeFullscreenModal').classList.add('hidden');
+  document.body.style.overflow='';
+  // Re-render the inline view to stay in sync
+  if(window._dsaActiveSol) renderDSASolutionView(window._dsaActiveSol);
 }
 
 function toggleAccordion(idx){
@@ -3519,23 +3623,111 @@ async function exportSdSession(fmt='txt'){
 }
 
 function exportSessionAsPDF(title, sections, filename){
-  // Build styled HTML for PDF
-  const html=`<div style="font-family:Georgia,serif;color:#1A1814;max-width:700px;margin:0 auto;padding:32px">
-    <h1 style="font-size:22px;font-weight:700;margin-bottom:6px;letter-spacing:-0.02em">${title}</h1>
-    <div style="font-size:11px;color:#807D75;font-family:monospace;margin-bottom:28px;padding-bottom:14px;border-bottom:2px solid #1A1814">TechPrep Pro · Interview Preparation</div>
-    ${sections.map((s,i)=>`
-      <div style="margin-bottom:24px">
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#1A1814;border-bottom:1.5px solid #1A1814;padding-bottom:4px;margin-bottom:10px">${String(i+1).padStart(2,'0')} · ${s.title}</div>
-        <div style="font-size:13px;line-height:1.65;color:#2E2B24">${(s.content||'').replace(/\n/g,'<br/>')}</div>
-      </div>`).join('')}
-  </div>`;
-  const w=document.createElement('div');w.innerHTML=html;document.body.appendChild(w);
-  html2pdf().set({
-    margin:[14,14,14,14],filename,
-    image:{type:'jpeg',quality:0.96},
-    html2canvas:{scale:2,useCORS:true},
-    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
-  }).from(w).save().then(()=>document.body.removeChild(w));
+  const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  const sectionsHTML = sections.map((s,i)=>`
+    <div class="pdf-section">
+      <div class="pdf-sec-title">${String(i+1).padStart(2,'0')}  ${esc(s.title)}</div>
+      <div class="pdf-sec-body">${esc(s.content||'')}</div>
+    </div>`).join('');
+
+  // Create container in normal document flow (not fixed/absolute) so html2canvas sees it
+  const container = document.createElement('div');
+  container.id = 'pdfRenderContainer';
+  container.innerHTML = `
+    <h1 class="pdf-h1">${esc(title)}</h1>
+    <div class="pdf-meta">TechPrep Pro  ·  Interview Preparation</div>
+    ${sectionsHTML}`;
+  document.body.appendChild(container);
+
+  // Inject a style tag that forces white background and dark text on the container
+  // This OVERRIDES the dark navy body styles with maximum specificity
+  const styleTag = document.createElement('style');
+  styleTag.id = 'pdfTempStyle';
+  styleTag.textContent = `
+    #pdfRenderContainer {
+      position: fixed !important;
+      left: -9999px !important;
+      top: 0 !important;
+      width: 794px !important;
+      background: #ffffff !important;
+      color: #111111 !important;
+      font-family: Arial, Helvetica, sans-serif !important;
+      font-size: 12px !important;
+      line-height: 1.6 !important;
+      padding: 40px 48px !important;
+      margin: 0 !important;
+      z-index: 99999 !important;
+    }
+    #pdfRenderContainer * {
+      background: transparent !important;
+      color: #111111 !important;
+      font-family: Arial, Helvetica, sans-serif !important;
+    }
+    #pdfRenderContainer .pdf-h1 {
+      font-size: 18px !important;
+      font-weight: 800 !important;
+      color: #0a0a0a !important;
+      margin: 0 0 4px !important;
+    }
+    #pdfRenderContainer .pdf-meta {
+      font-size: 9px !important;
+      color: #555555 !important;
+      margin-bottom: 20px !important;
+      padding-bottom: 8px !important;
+      border-bottom: 1.5px solid #0a0a0a !important;
+    }
+    #pdfRenderContainer .pdf-section {
+      margin-bottom: 20px !important;
+    }
+    #pdfRenderContainer .pdf-sec-title {
+      font-size: 9.5px !important;
+      font-weight: 800 !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.1em !important;
+      color: #0a0a0a !important;
+      border-bottom: 1.5px solid #0a0a0a !important;
+      padding-bottom: 3px !important;
+      margin-bottom: 7px !important;
+    }
+    #pdfRenderContainer .pdf-sec-body {
+      font-size: 11px !important;
+      line-height: 1.6 !important;
+      color: #1a1a1a !important;
+      white-space: pre-wrap !important;
+    }
+  `;
+  document.head.appendChild(styleTag);
+
+  const cleanup = () => {
+    if(document.body.contains(container)) document.body.removeChild(container);
+    const st = document.getElementById('pdfTempStyle');
+    if(st) document.head.removeChild(st);
+  };
+
+  // Small delay to let styles apply
+  setTimeout(() => {
+    html2pdf()
+      .set({
+        margin: [10, 10, 10, 10],
+        filename,
+        image: { type: 'jpeg', quality: 0.97 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          logging: false,
+          backgroundColor: '#ffffff',
+          windowWidth: 794,
+          scrollX: 0,
+          scrollY: 0
+        },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      })
+      .from(container)
+      .save()
+      .then(cleanup)
+      .catch(e => { cleanup(); alert('PDF error: ' + e.message); });
+  }, 100);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -3554,6 +3746,14 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   // DSA topics
   initDSATopics();
+
+  // Escape key closes fullscreen code modal
+  document.addEventListener('keydown', e => {
+    if(e.key === 'Escape') {
+      const modal = document.getElementById('codeFullscreenModal');
+      if(modal && !modal.classList.contains('hidden')) closeCodeFullscreen();
+    }
+  });
 
   // Show home module
   showModule('home');
